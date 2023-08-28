@@ -40,6 +40,9 @@ All scraping commands accept the following flags:
 * `-v`: verbose mode
 * `-o`: output format, could be `json`, `yaml` or `text` (`text` is default)
 
+## Contributors
+This project was initially developed by [Alex Lokshin](https://github.com/alexlokshin-czi), [Alex Biju](https://github.com/abiju-czi), [Hayden Spitzley](https://github.com/hspitzley-czi), and [Travis Fields](https://github.com/cyberious).
+
 ## Contributing
 Contributions and ideas are welcome! Please don't hesitate to open an issue, join our [gitter chat room](https://gitter.im/chanzuckerberg/camelot), or send a pull request.
 
