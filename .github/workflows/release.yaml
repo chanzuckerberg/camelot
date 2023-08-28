@@ -1,0 +1,33 @@
+on:
+  release:
+    types: [published]
+  
+name: release
+jobs:
+    release:
+      runs-on: [ARM64, self-hosted, Linux]
+      steps:
+        # See https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+        # For why we need to generate a token and not use the default
+        - name: Generate token
+          id: generate_token
+          uses: chanzuckerberg/github-app-token@v1.1.4
+          with:
+            app_id: ${{ secrets.CZI_RELEASE_PLEASE_APP_ID }}
+            private_key: ${{ secrets.CZI_RELEASE_PLEASE_PK }}
+        
+        - uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+    
+        - uses: actions/setup-go@v3
+          with:
+            go-version-file: go.mod
+    
+        - name: Run GoReleaser
+          uses: goreleaser/goreleaser-action@v2
+          with:
+            version: latest
+            args: release --rm-dist
+          env:
+            GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}

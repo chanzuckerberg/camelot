@@ -1,0 +1,28 @@
+builds:
+  - binary: camelot
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - '-w -s -X main.Date={{.CommitDate}} -X github.com/chanzuckerberg/camelot/util.GitSha={{.Commit}} -X github.com/chanzuckerberg/camelot/util.Version={{.Version}} -X github.com/chanzuckerberg/camelot/util.Dirty=false -X github.com/chanzuckerberg/camelot/util.Release=true'
+    mod_timestamp: '{{ .CommitTimestamp }}'
+
+archives:
+  - files:
+      - none*
+
+release:
+  prerelease: "false"
+
+brews:
+  - description: 'Publish the release.'
+    tap:
+      owner: chanzuckerberg
+      name: homebrew-tap
+    homepage: 'https://github.com/chanzuckerberg/camelot'
+    test: system "#{bin}/camelot version"
