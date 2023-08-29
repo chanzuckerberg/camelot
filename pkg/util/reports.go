@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
@@ -41,10 +42,19 @@ func ReportToTable(report types.InventoryReport) [][]string {
 }
 
 func versionedResourceToTableRow(kind string, item types.VersionedResource) []string {
+	var sb strings.Builder
+	for _, p := range item.Parents {
+		if sb.Len() > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(p.Kind)
+		sb.WriteString(":")
+		sb.WriteString(p.ID)
+	}
 	return []string{
 		kind,
 		truncate(item.Name, 80),
-		truncate(item.Parent, 80),
+		truncate(sb.String(), 80),
 		item.Version,
 		item.CurrentVersion,
 		string(item.EOL.Status),

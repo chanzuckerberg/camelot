@@ -73,7 +73,7 @@ func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.In
 			machineImages = append(machineImages, types.MachineImage{
 				VersionedResource: types.VersionedResource{
 					Name:           *image.ImageId,
-					Parent:         "ec2:" + *instance.InstanceId,
+					Parents:        []types.ParentResource{{Kind: "ec2", ID: *instance.InstanceId}},
 					Arn:            "",
 					Version:        *image.Name,
 					CurrentVersion: "", // TODO: figure out how to find the most recent version of this AMI
