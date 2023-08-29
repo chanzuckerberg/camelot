@@ -2,9 +2,9 @@ package tfc
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
-	"regexp"
 	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
@@ -22,6 +22,11 @@ type TFEAssets struct {
 type Repo struct {
 	WorkingDir []string `json:"working_dir"`
 	Branch     []string `json:"branch"`
+	Module     string   `json:"module"`
+	Mode       string   `json:"mode"`
+	Type       string   `json:"type"`
+	Name       string   `json:"name"`
+	Provider   string   `json:"provider"`
 }
 
 type SourceRepos map[string]*Repo
@@ -34,34 +39,20 @@ type AWSAssetReference struct {
 	TFEOrgs Orgs    `json:"orgs"`
 }
 
-// {
-// 	"arn:aws:acm:us-east-1:699936264352:certificate/e7ff72cc-763c-442a-b437-30b162d88da4": {
-// 		"orgs": {
-// 			"single-cell-infra": {
-// 				"staging-corpora": {
-// 					"https://github.com/chanzuckerberg/single-cell-infra": {
-// 						"working_dir": [
-// 							"terraform/envs/staging/corpora"
-// 						],
-// 						"branch": [
-// 							"main"
-// 						]
-// 					}
-// 				},
-// 				"staging-hosted-cellxgene": {
-// 					"https://github.com/chanzuckerberg/single-cell-infra": {
-// 						"working_dir": [
-// 							"terraform/envs/staging/hosted-cellxgene"
-// 						],
-// 						"branch": [
-// 							"main"
-// 						]
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+type TFEState struct {
+	Resources []struct {
+		Module    string `json:"module"`
+		Mode      string `json:"mode"`
+		Type      string `json:"type"`
+		Name      string `json:"name"`
+		Provider  string `json:"provider"`
+		Instances []struct {
+			Attributes struct {
+				Arn string `json:"arn"`
+			} `json:"attributes"`
+		} `json:"instances"`
+	} `json:"resources"`
+}
 
 func mergeWorkspaces(workspaces ...Workspaces) Workspaces {
 	merged := Workspaces{}
@@ -116,43 +107,67 @@ func (c *TFEAssets) GetWorkspaceState(ctx context.Context, workspace *tfe.Worksp
 	if err != nil {
 		return nil, errors.Wrapf(err, "error reading response body for state for workspace '%s'", workspace.Name)
 	}
-	r, err := regexp.Compile("\"(arn:aws:.*?)\"")
+	// r, err := regexp.Compile("\"(arn:aws:.*?)\"")
+	// if err != nil {
+	// 	return nil, errors.Wrapf(err, "error compiling regex for workspace '%s'", workspace.Name)
+	// }
+
+	// arns := r.FindAllStringSubmatch(string(body), -1)
+
+	var parsedState TFEState
+	err = json.Unmarshal(body, &parsedState)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error compiling regex for workspace '%s'", workspace.Name)
+		return nil, errors.Wrapf(err, "error unmarshalling state for workspace '%s'", workspace.Name)
 	}
 
-	arns := r.FindAllStringSubmatch(string(body), -1)
-
-	// Duplicate ARNs will have the same data, so no need to dedupe
-	for _, submatches := range arns {
-		parsedArn, err := arn.Parse(submatches[1])
-		if err != nil {
-			logrus.Debugf("error parsing arn '%s': %s", submatches[1], err.Error())
-			continue
-		}
-
-		trimmedARN := parsedArn.String()
-		var vcs map[string]*Repo
-		if workspace.VCSRepo != nil {
-			vcs = map[string]*Repo{
-				workspace.VCSRepo.RepositoryHTTPURL: {
-					Branch:     []string{workspace.VCSRepo.Branch},
-					WorkingDir: []string{workspace.WorkingDirectory},
-				},
+	for _, resource := range parsedState.Resources {
+		for _, resourceInstance := range resource.Instances {
+			if resourceInstance.Attributes.Arn == "" {
+				continue
 			}
-		}
-		if _, exists := awsAssets[trimmedARN]; exists {
-			awsAssets[trimmedARN].TFEOrgs[workspace.Organization.Name][workspace.Name] = vcs
-		} else {
-			awsAssets[trimmedARN] = &AWSAssetReference{
-				ARN: parsedArn,
-				TFEOrgs: Orgs{
-					workspace.Organization.Name: {
-						workspace.Name: vcs,
+			parsedArn, err := arn.Parse(resourceInstance.Attributes.Arn)
+			if err != nil {
+				logrus.Debugf("error parsing arn '%s': %s", resourceInstance.Attributes.Arn, err.Error())
+				continue
+			}
+			var vcs map[string]*Repo
+			if workspace.VCSRepo != nil {
+				vcs = map[string]*Repo{
+					workspace.VCSRepo.RepositoryHTTPURL: {
+						Branch:     []string{workspace.VCSRepo.Branch},
+						WorkingDir: []string{workspace.WorkingDirectory},
+						Type:       resource.Type,
+						Module:     resource.Module,
+						Mode:       resource.Mode,
+						Name:       resource.Name,
+						Provider:   resource.Provider,
 					},
-				},
+				}
+			} else {
+				vcs = map[string]*Repo{
+					"no-vcs": {
+						Type:     resource.Type,
+						Module:   resource.Module,
+						Mode:     resource.Mode,
+						Name:     resource.Name,
+						Provider: resource.Provider,
+					},
+				}
+			}
+			if _, exists := awsAssets[resourceInstance.Attributes.Arn]; exists {
+				awsAssets[resourceInstance.Attributes.Arn].TFEOrgs[workspace.Organization.Name][workspace.Name] = vcs
+			} else {
+				awsAssets[resourceInstance.Attributes.Arn] = &AWSAssetReference{
+					ARN: parsedArn,
+					TFEOrgs: Orgs{
+						workspace.Organization.Name: {
+							workspace.Name: vcs,
+						},
+					},
+				}
 			}
 		}
+
 	}
 	return awsAssets, nil
 }
