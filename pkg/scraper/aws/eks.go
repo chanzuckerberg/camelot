@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"strings"
 	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/service/eks"
@@ -135,7 +134,7 @@ func processCluster(ctx context.Context, awsClient interfaces.AWSClient, cluster
 
 func createK8sConfig(ctx context.Context, awsClient interfaces.AWSClient, clusterInfo *eks.DescribeClusterOutput, clusterName string) (*rest.Config, error) {
 	var rawConfig *rest.Config
-	cert, err := base64.RawStdEncoding.DecodeString(strings.TrimRight(*clusterInfo.Cluster.CertificateAuthority.Data, "="))
+	cert, err := base64.StdEncoding.DecodeString(*clusterInfo.Cluster.CertificateAuthority.Data)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to decode CA data")
 	}
