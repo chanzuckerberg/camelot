@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/service/eks"
@@ -51,7 +52,7 @@ func extractEksClusterInfo(ctx context.Context, awsClient interfaces.AWSClient) 
 			defer wg.Done()
 			report, err := processCluster(ctx, awsClient, cluster, cycleMap, activeVersion)
 			if err != nil {
-				logrus.Errorf("error processing cluster %s: %s", cluster, err.Error())
+				logrus.Debugf("error processing cluster %s: %s", cluster, err.Error())
 				return
 			}
 			reports[i] = report
@@ -134,7 +135,10 @@ func processCluster(ctx context.Context, awsClient interfaces.AWSClient, cluster
 
 func createK8sConfig(ctx context.Context, awsClient interfaces.AWSClient, clusterInfo *eks.DescribeClusterOutput, clusterName string) (*rest.Config, error) {
 	var rawConfig *rest.Config
-	cert, _ := base64.RawStdEncoding.DecodeString(*clusterInfo.Cluster.CertificateAuthority.Data)
+	cert, err := base64.RawStdEncoding.DecodeString(strings.TrimRight(*clusterInfo.Cluster.CertificateAuthority.Data, "="))
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to decode CA data")
+	}
 	config := api.Config{
 		APIVersion: "v1",
 		Kind:       "Config",
@@ -151,7 +155,7 @@ func createK8sConfig(ctx context.Context, awsClient interfaces.AWSClient, cluste
 		},
 		CurrentContext: "cluster",
 	}
-	rawConfig, err := clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
+	rawConfig, err = clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create kubeconfig")
 	}
