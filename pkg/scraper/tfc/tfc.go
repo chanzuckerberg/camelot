@@ -107,12 +107,6 @@ func (c *TFEAssets) GetWorkspaceState(ctx context.Context, workspace *tfe.Worksp
 	if err != nil {
 		return nil, errors.Wrapf(err, "error reading response body for state for workspace '%s'", workspace.Name)
 	}
-	// r, err := regexp.Compile("\"(arn:aws:.*?)\"")
-	// if err != nil {
-	// 	return nil, errors.Wrapf(err, "error compiling regex for workspace '%s'", workspace.Name)
-	// }
-
-	// arns := r.FindAllStringSubmatch(string(body), -1)
 
 	var parsedState TFEState
 	err = json.Unmarshal(body, &parsedState)
