@@ -45,7 +45,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 	}
 
 	report := &types.InventoryReport{
-		Repos: []types.Repo{},
+		Repos: []types.GitRepo{},
 	}
 
 	moduleUsageMap := map[string]map[string]int{}
@@ -109,7 +109,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		if time.Now().After(eolDate) {
 			status = types.StatusOutdated
 		}
-		report.Repos = append(report.Repos, types.Repo{
+		report.Repos = append(report.Repos, types.GitRepo{
 			VersionedResource: types.VersionedResource{
 				Name:    *repo.Name,
 				Arn:     "",
@@ -171,7 +171,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 				eolDate = ref.Timestamp.AddDate(3, 0, 0).Format("2006-01-02")
 			}
 			for repo := range repos {
-				report.Modules = append(report.Modules, types.Module{
+				report.Modules = append(report.Modules, types.TerraformModule{
 					VersionedResource: types.VersionedResource{
 						Name:           strings.Replace(module, fmt.Sprintf("github.com/%s/", githubOrg), "", 1),
 						Arn:            "",

@@ -54,13 +54,14 @@ type RDSCluster struct {
 
 type Lambda struct {
 	VersionedResource
+	Engine string `json:"engine,omitempty"`
 }
 
-type Repo struct {
+type GitRepo struct {
 	VersionedResource
 }
 
-type Module struct {
+type TerraformModule struct {
 	VersionedResource
 }
 
@@ -86,16 +87,16 @@ type Indentity struct {
 }
 
 type InventoryReport struct {
-	Identity      Indentity      `json:"identity,omitempty"`
-	EksClusters   []EKSCluster   `json:"eks_clusters,omitempty"`
-	RdsClusters   []RDSCluster   `json:"rds_clusters,omitempty"`
-	Lambdas       []Lambda       `json:"lambdas,omitempty"`
-	Repos         []Repo         `json:"repos,omitempty"`
-	Modules       []Module       `json:"modules,omitempty"`
-	HelmReleases  []HelmRelease  `json:"helm_releases,omitempty"`
-	MachineImages []MachineImage `json:"machine_images,omitempty"`
-	TfcResources  []TfcResource  `json:"tfc_resources,omitempty"`
-	TfcWorkspaces []TfcWorkspace `json:"tfc_workspace,omitempty"`
+	Identity      Indentity         `json:"identity,omitempty"`
+	EksClusters   []EKSCluster      `json:"eks_clusters,omitempty"`
+	RdsClusters   []RDSCluster      `json:"rds_clusters,omitempty"`
+	Lambdas       []Lambda          `json:"lambdas,omitempty"`
+	Repos         []GitRepo         `json:"repos,omitempty"`
+	Modules       []TerraformModule `json:"modules,omitempty"`
+	HelmReleases  []HelmRelease     `json:"helm_releases,omitempty"`
+	MachineImages []MachineImage    `json:"machine_images,omitempty"`
+	TfcResources  []TfcResource     `json:"tfc_resources,omitempty"`
+	TfcWorkspaces []TfcWorkspace    `json:"tfc_workspace,omitempty"`
 }
 
 type ProductCycle struct {

@@ -66,6 +66,7 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 					Status:        eolStatus(daysDiff),
 				},
 			},
+			Engine: string(function.Runtime),
 		})
 	}
 	return &types.InventoryReport{Lambdas: lambdas}, nil
