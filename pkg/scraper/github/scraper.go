@@ -113,7 +113,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 			VersionedResource: types.VersionedResource{
 				Name:    *repo.Name,
 				Arn:     "",
-				Parent:  githubOrg,
+				Parent:  types.ParentResource{Kind: "github-org", ID: githubOrg},
 				Version: "0.0.0",
 				EOL: types.EOLStatus{
 					EOLDate:       eolDate.Format("2006-01-02"),
@@ -175,7 +175,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 					VersionedResource: types.VersionedResource{
 						Name:           strings.Replace(module, fmt.Sprintf("github.com/%s/", githubOrg), "", 1),
 						Arn:            "",
-						Parent:         fmt.Sprintf("repo:%s", repo),
+						Parent:         types.ParentResource{Kind: "github-repo", ID: repo},
 						Version:        ref.Ref,
 						CurrentVersion: moduleRefs[0].Ref,
 						EOL: types.EOLStatus{

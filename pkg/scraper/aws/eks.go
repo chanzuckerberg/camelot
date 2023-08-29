@@ -116,7 +116,7 @@ func processCluster(ctx context.Context, awsClient interfaces.AWSClient, cluster
 		VersionedResource: types.VersionedResource{
 			Name:           *clusterInfo.Cluster.Name,
 			Arn:            *clusterInfo.Cluster.Arn,
-			Parent:         fmt.Sprintf("aws:%s", awsClient.GetAccountId()),
+			Parent:         types.ParentResource{Kind: "account", ID: awsClient.GetAccountId()},
 			Version:        *clusterInfo.Cluster.Version,
 			CurrentVersion: activeVersion,
 			EOL: types.EOLStatus{

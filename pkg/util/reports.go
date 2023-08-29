@@ -44,7 +44,7 @@ func versionedResourceToTableRow(kind string, item types.VersionedResource) []st
 	return []string{
 		kind,
 		truncate(item.Name, 80),
-		truncate(item.Parent, 80),
+		truncate(item.Parent.Kind+":"+item.Parent.ID, 80),
 		item.Version,
 		item.CurrentVersion,
 		string(item.EOL.Status),

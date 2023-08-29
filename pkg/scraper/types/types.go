@@ -20,10 +20,15 @@ type GitOpsReference struct {
 	Path   string `json:"path,omitempty"`
 }
 
+type ParentResource struct {
+	Kind string `json:"kind,omitempty"`
+	ID   string `json:"name,omitempty"`
+}
+
 type VersionedResource struct {
 	Name            string          `json:"name,omitempty"`
 	Arn             string          `json:"arn,omitempty"`
-	Parent          string          `json:"parent,omitempty"`
+	Parent          ParentResource  `json:"parent,omitempty"`
 	Version         string          `json:"version,omitempty"`
 	CurrentVersion  string          `json:"current_version,omitempty"`
 	GitOpsReference GitOpsReference `json:"gitops_reference,omitempty"`

@@ -56,7 +56,7 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 		lambdas = append(lambdas, types.Lambda{
 			VersionedResource: types.VersionedResource{
 				Name:           *function.FunctionName,
-				Parent:         fmt.Sprintf("aws:%s", awsClient.GetAccountId()),
+				Parent:         types.ParentResource{Kind: "account", ID: awsClient.GetAccountId()},
 				Arn:            *function.FunctionArn,
 				Version:        version,
 				CurrentVersion: currentCycleMap[string(function.Runtime)],
