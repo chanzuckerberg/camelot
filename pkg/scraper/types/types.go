@@ -8,6 +8,16 @@ const StatusWarning = "WARNING"
 const StatusCritical = "CRITICAL"
 const StatusOutdated = "OUTDATED"
 
+type ResourceKind string
+
+const KindAWSAccount ResourceKind = "aws"
+const KindEC2Instance ResourceKind = "ec2"
+const KindEKSCluster ResourceKind = "eks"
+const KindGithubOrg ResourceKind = "github-org"
+const KindGithubRepo ResourceKind = "github-repo"
+const KindTFCOrg ResourceKind = "tfc-org"
+const KindTFCWorkspace ResourceKind = "tfc-workspace"
+
 type EOLStatus struct {
 	EOLDate       string `json:"eol_date,omitempty"`
 	RemainingDays int    `json:"remaining_active_days"`
@@ -21,8 +31,8 @@ type GitOpsReference struct {
 }
 
 type ParentResource struct {
-	Kind string `json:"kind,omitempty"`
-	ID   string `json:"name,omitempty"`
+	Kind ResourceKind `json:"kind,omitempty"`
+	ID   string       `json:"name,omitempty"`
 }
 
 type VersionedResource struct {

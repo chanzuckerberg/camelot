@@ -64,7 +64,7 @@ func extractRds(ctx context.Context, awsClient interfaces.AWSClient) (*types.Inv
 			Engine: *instance.Engine,
 			VersionedResource: types.VersionedResource{
 				Name:           *instance.DBClusterIdentifier,
-				Parents:        []types.ParentResource{{Kind: "account", ID: awsClient.GetAccountId()}},
+				Parents:        []types.ParentResource{{Kind: types.KindAWSAccount, ID: awsClient.GetAccountId()}},
 				Arn:            *instance.DBClusterArn,
 				Version:        *instance.EngineVersion,
 				CurrentVersion: currentCycleMap[*instance.Engine],
