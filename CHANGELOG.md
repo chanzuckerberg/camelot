@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.14.0](https://github.com/chanzuckerberg/camelot/compare/v0.13.1...v0.14.0) (2023-08-30)
+
+
+### Features
+
+* Added engine version to lambda resources ([e71574c](https://github.com/chanzuckerberg/camelot/commit/e71574cc56c18c22006c6eb9fc79576f675fffb9))
+* Allow precise parent reference ([ece87bd](https://github.com/chanzuckerberg/camelot/commit/ece87bd6c4f1c4407a586b188a218e2c69b975a6))
+* parse tf state to pull arn more consistently ([7e807ee](https://github.com/chanzuckerberg/camelot/commit/7e807eeb0b7421293d9bc2edb50452e07f56929f))
+
+
+### Bug Fixes
+
+* Camelot cannot process padded encoded CA cert ([9355de0](https://github.com/chanzuckerberg/camelot/commit/9355de0525e75669a679bc7532284c3b7033e33f))
+
 ## [0.13.1](https://github.com/chanzuckerberg/camelot/compare/v0.13.0...v0.13.1) (2023-08-28)
 
 
