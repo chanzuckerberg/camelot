@@ -47,7 +47,7 @@ func versionedResourceToTableRow(kind string, item types.VersionedResource) []st
 		if sb.Len() > 0 {
 			sb.WriteString(",")
 		}
-		sb.WriteString(p.Kind)
+		sb.WriteString(string(p.Kind))
 		sb.WriteString(":")
 		sb.WriteString(p.ID)
 	}
