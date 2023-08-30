@@ -9,39 +9,44 @@ import (
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
 )
 
+type ReportFilter struct {
+	ResourceKinds []types.ResourceKind
+	ParentTypes   []types.ResourceKind
+}
+
 func ReportToTable(report types.InventoryReport) [][]string {
 	var table [][]string
 	for _, item := range report.MachineImages {
-		table = append(table, versionedResourceToTableRow("AMI", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	for _, item := range report.RdsClusters {
-		table = append(table, versionedResourceToTableRow("RDS", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	for _, item := range report.EksClusters {
-		table = append(table, versionedResourceToTableRow("EKS", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	for _, item := range report.Lambdas {
-		table = append(table, versionedResourceToTableRow("Lambda", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	for _, item := range report.Repos {
-		table = append(table, versionedResourceToTableRow("GitRepo", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	for _, item := range report.Modules {
-		table = append(table, versionedResourceToTableRow("TfModule", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	for _, item := range report.HelmReleases {
-		table = append(table, versionedResourceToTableRow("HelmRelease", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	for _, item := range report.TfcResources {
-		table = append(table, versionedResourceToTableRow("TfcResource", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	for _, item := range report.TfcWorkspaces {
-		table = append(table, versionedResourceToTableRow("TfcWorkspace", item.VersionedResource))
+		table = append(table, versionedResourceToTableRow(item.VersionedResource))
 	}
 	return table
 }
 
-func versionedResourceToTableRow(kind string, item types.VersionedResource) []string {
+func versionedResourceToTableRow(item types.VersionedResource) []string {
 	var sb strings.Builder
 	for _, p := range item.Parents {
 		if sb.Len() > 0 {
@@ -52,7 +57,7 @@ func versionedResourceToTableRow(kind string, item types.VersionedResource) []st
 		sb.WriteString(p.ID)
 	}
 	return []string{
-		kind,
+		string(item.Kind),
 		truncate(item.Name, 80),
 		truncate(sb.String(), 80),
 		item.Version,

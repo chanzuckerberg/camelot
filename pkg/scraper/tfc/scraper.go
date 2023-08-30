@@ -40,6 +40,7 @@ func Scrape() (*types.InventoryReport, error) {
 			resource := types.TfcWorkspace{
 				VersionedResource: types.VersionedResource{
 					Name:    workspace.Name,
+					Kind:    types.KindTFCWorkspace,
 					Parents: []types.ParentResource{{Kind: types.KindTFCOrg, ID: org}},
 					Version: workspace.TerraformVersion,
 					GitOpsReference: types.GitOpsReference{
@@ -91,6 +92,7 @@ func Scrape() (*types.InventoryReport, error) {
 							report.TfcResources = append(report.TfcResources, types.TfcResource{
 								VersionedResource: types.VersionedResource{
 									Name:    asset.ARN.Service + ":" + asset.ARN.Resource,
+									Kind:    types.KindTFCResource,
 									Parents: parents,
 									GitOpsReference: types.GitOpsReference{
 										Repo:   repoUrl,

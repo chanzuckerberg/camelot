@@ -112,6 +112,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		report.Repos = append(report.Repos, types.GitRepo{
 			VersionedResource: types.VersionedResource{
 				Name:    *repo.Name,
+				Kind:    types.KindGithubRepo,
 				Arn:     "",
 				Parents: []types.ParentResource{{Kind: types.KindGithubOrg, ID: githubOrg}},
 				Version: "0.0.0",
@@ -174,6 +175,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 				report.Modules = append(report.Modules, types.TerraformModule{
 					VersionedResource: types.VersionedResource{
 						Name:           strings.Replace(module, fmt.Sprintf("github.com/%s/", githubOrg), "", 1),
+						Kind:           types.KindTerrfaormModule,
 						Arn:            "",
 						Parents:        []types.ParentResource{{Kind: types.KindGithubRepo, ID: repo}},
 						Version:        ref.Ref,

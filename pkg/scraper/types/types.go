@@ -12,11 +12,17 @@ type ResourceKind string
 
 const KindAWSAccount ResourceKind = "aws"
 const KindEC2Instance ResourceKind = "ec2"
+const KindMachineImage ResourceKind = "ami"
+const KindRDSCluster ResourceKind = "rds"
+const KindLambda ResourceKind = "lambda"
 const KindEKSCluster ResourceKind = "eks"
+const KindHelmRelease ResourceKind = "helm"
 const KindGithubOrg ResourceKind = "github-org"
 const KindGithubRepo ResourceKind = "github-repo"
+const KindTerrfaormModule ResourceKind = "tf-module"
 const KindTFCOrg ResourceKind = "tfc-org"
 const KindTFCWorkspace ResourceKind = "tfc-workspace"
+const KindTFCResource ResourceKind = "tfc-resource"
 
 type EOLStatus struct {
 	EOLDate       string `json:"eol_date,omitempty"`
@@ -36,6 +42,7 @@ type ParentResource struct {
 }
 
 type VersionedResource struct {
+	Kind            ResourceKind     `json:"kind,omitempty"`
 	Name            string           `json:"name,omitempty"`
 	Arn             string           `json:"arn,omitempty"`
 	Parents         []ParentResource `json:"parents,omitempty"`

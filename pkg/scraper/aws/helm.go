@@ -84,6 +84,7 @@ func getHelmReleases(ctx context.Context, config *rest.Config, namespaces []stri
 			helmReleases = append(helmReleases, types.HelmRelease{
 				VersionedResource: types.VersionedResource{
 					Name:           fmt.Sprintf("%s/%s", namespace, release.Name),
+					Kind:           types.KindHelmRelease,
 					Arn:            "",
 					Parents:        []types.ParentResource{{Kind: types.KindEKSCluster, ID: clusterName}},
 					Version:        activeVersion.String(),

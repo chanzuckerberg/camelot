@@ -73,6 +73,7 @@ func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.In
 			machineImages = append(machineImages, types.MachineImage{
 				VersionedResource: types.VersionedResource{
 					Name:           *image.ImageId,
+					Kind:           types.KindMachineImage,
 					Parents:        []types.ParentResource{{Kind: types.KindEC2Instance, ID: *instance.InstanceId}},
 					Arn:            "",
 					Version:        *image.Name,

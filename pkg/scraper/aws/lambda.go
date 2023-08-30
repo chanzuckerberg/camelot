@@ -56,6 +56,7 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 		lambdas = append(lambdas, types.Lambda{
 			VersionedResource: types.VersionedResource{
 				Name:           *function.FunctionName,
+				Kind:           types.KindLambda,
 				Parents:        []types.ParentResource{{Kind: types.KindAWSAccount, ID: awsClient.GetAccountId()}},
 				Arn:            *function.FunctionArn,
 				Version:        version,

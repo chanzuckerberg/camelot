@@ -115,6 +115,7 @@ func processCluster(ctx context.Context, awsClient interfaces.AWSClient, cluster
 	eksClusters := []types.EKSCluster{{
 		VersionedResource: types.VersionedResource{
 			Name:           *clusterInfo.Cluster.Name,
+			Kind:           types.KindEKSCluster,
 			Arn:            *clusterInfo.Cluster.Arn,
 			Parents:        []types.ParentResource{{Kind: types.KindAWSAccount, ID: awsClient.GetAccountId()}},
 			Version:        *clusterInfo.Cluster.Version,
