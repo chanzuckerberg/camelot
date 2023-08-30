@@ -10,8 +10,11 @@ import (
 )
 
 type ReportFilter struct {
-	ResourceKinds []types.ResourceKind
-	ParentTypes   []types.ResourceKind
+	ResourceKinds []types.ResourceKind // TODO: Support logical operators
+	ParentKinds   []types.ResourceKind // TODO: Support logical operators
+	ParentIDs     []string             // TODO: Support logical operators
+	IDs           []string             // TODO: Support logical operators
+	Status        types.Status         // TODO: Support multiple statuses, and logical operators
 }
 
 func ReportToTable(report types.InventoryReport) [][]string {
@@ -155,10 +158,10 @@ func isMatch(item types.VersionedResource, filter ReportFilter) bool {
 			return false
 		}
 	}
-	if len(filter.ParentTypes) > 0 {
+	if len(filter.ParentKinds) > 0 {
 		found := false
 		for _, parent := range item.Parents {
-			for _, kind := range filter.ParentTypes {
+			for _, kind := range filter.ParentKinds {
 				if parent.Kind == kind {
 					found = true
 					break
@@ -187,7 +190,27 @@ func RemainingDays(eolDate time.Time) int {
 	return int(diff.Hours() / 24)
 }
 
-func CreateFilter(f string) ReportFilter {
+func CreateFilter(f []string) ReportFilter {
 	filter := ReportFilter{}
+
+	for _, kv := range f {
+		parts := strings.Split(kv, "=")
+		if len(parts) != 2 {
+			continue
+		}
+		switch parts[0] {
+		case "status":
+			filter.Status = types.Status(strings.ToUpper(parts[1]))
+		case "id":
+			filter.IDs = append(filter.IDs, parts[1])
+		case "kind":
+			filter.ResourceKinds = append(filter.ResourceKinds, types.ResourceKind(parts[1]))
+		case "parent.kind":
+			filter.ParentKinds = append(filter.ParentKinds, types.ResourceKind(parts[1]))
+		case "parent.id":
+			filter.ParentIDs = append(filter.ParentIDs, parts[1])
+		}
+	}
+
 	return filter
 }
