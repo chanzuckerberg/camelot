@@ -13,7 +13,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func PrintReport(report *types.InventoryReport, outputFormat string) error {
+func PrintReport(report *types.InventoryReport, filter util.ReportFilter, outputFormat string) error {
+	report = util.FilterReport(report, filter)
 	switch outputFormat {
 	case "json":
 		b, err := json.MarshalIndent(report, "", "  ")

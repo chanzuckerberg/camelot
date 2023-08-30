@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/chanzuckerberg/camelot/pkg/printer"
 	scraper "github.com/chanzuckerberg/camelot/pkg/scraper/aws"
+	"github.com/chanzuckerberg/camelot/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -61,7 +62,7 @@ func scrape(cmd *cobra.Command, args []string) error {
 			logrus.Errorf("failed to scrape resources for profile %s: %s", profile, err.Error())
 		}
 
-		err = printer.PrintReport(report, outputFormat)
+		err = printer.PrintReport(report, util.CreateFilter(filter), outputFormat)
 		if err != nil {
 			logrus.Errorf("failed to print report for profile %s: %s", profile, err.Error())
 		}

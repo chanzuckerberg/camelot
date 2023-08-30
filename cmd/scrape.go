@@ -7,6 +7,7 @@ import (
 
 const (
 	flagOutputFormat = "output"
+	flagFilter       = "filter"
 )
 
 var (
@@ -20,9 +21,11 @@ var (
 		},
 	}
 	outputFormat string
+	filter       string
 )
 
 func init() {
 	rootCmd.AddCommand(scrapeCmd)
 	scrapeCmd.PersistentFlags().StringVarP(&outputFormat, flagOutputFormat, "o", "text", "Output format (json, yaml, text). Defaults to text.")
+	scrapeCmd.PersistentFlags().StringVarP(&outputFormat, flagFilter, "f", "", "Report filter. Defaults to empty.")
 }

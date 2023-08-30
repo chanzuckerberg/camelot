@@ -80,8 +80,96 @@ func CombineReports(reports []*types.InventoryReport) types.InventoryReport {
 		summary.MachineImages = append(summary.MachineImages, report.MachineImages...)
 		summary.TfcResources = append(summary.TfcResources, report.TfcResources...)
 		summary.TfcWorkspaces = append(summary.TfcWorkspaces, report.TfcWorkspaces...)
+		summary.Repos = append(summary.Repos, report.Repos...)
+		summary.Modules = append(summary.Modules, report.Modules...)
 	}
 	return summary
+}
+
+func FilterReport(report *types.InventoryReport, filter ReportFilter) *types.InventoryReport {
+	if report == nil {
+		return nil
+	}
+	filtered := types.InventoryReport{}
+
+	// TODO: this is a mess, refactor
+	for _, item := range report.EksClusters {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.EksClusters = append(filtered.EksClusters, item)
+		}
+	}
+	for _, item := range report.RdsClusters {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.RdsClusters = append(filtered.RdsClusters, item)
+		}
+	}
+	for _, item := range report.Lambdas {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.Lambdas = append(filtered.Lambdas, item)
+		}
+	}
+	for _, item := range report.HelmReleases {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.HelmReleases = append(filtered.HelmReleases, item)
+		}
+	}
+	for _, item := range report.MachineImages {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.MachineImages = append(filtered.MachineImages, item)
+		}
+	}
+	for _, item := range report.TfcResources {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.TfcResources = append(filtered.TfcResources, item)
+		}
+	}
+	for _, item := range report.TfcWorkspaces {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.TfcWorkspaces = append(filtered.TfcWorkspaces, item)
+		}
+	}
+	for _, item := range report.Repos {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.Repos = append(filtered.Repos, item)
+		}
+	}
+	for _, item := range report.Modules {
+		if isMatch(item.VersionedResource, filter) {
+			filtered.Modules = append(filtered.Modules, item)
+		}
+	}
+
+	return &filtered
+}
+
+func isMatch(item types.VersionedResource, filter ReportFilter) bool {
+	if len(filter.ResourceKinds) > 0 {
+		found := false
+		for _, kind := range filter.ResourceKinds {
+			if item.Kind == kind {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	if len(filter.ParentTypes) > 0 {
+		found := false
+		for _, parent := range item.Parents {
+			for _, kind := range filter.ParentTypes {
+				if parent.Kind == kind {
+					found = true
+					break
+				}
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
 }
 
 func truncate(s string, l int) string {
@@ -97,4 +185,9 @@ func RemainingDays(eolDate time.Time) int {
 		return 0
 	}
 	return int(diff.Hours() / 24)
+}
+
+func CreateFilter(f string) ReportFilter {
+	filter := ReportFilter{}
+	return filter
 }
