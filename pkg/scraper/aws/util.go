@@ -28,16 +28,13 @@ func remainingDays(eol string) int {
 }
 
 func eolStatus(days int) types.Status {
-	if days <= 0 {
-		return types.StatusEndOfLife
-	}
 	if days <= 30 {
 		return types.StatusCritical
 	}
 	if days <= 90 {
 		return types.StatusWarning
 	}
-	return types.StatusActive
+	return types.StatusValid
 }
 
 func GetAWSProfiles() ([]string, error) {

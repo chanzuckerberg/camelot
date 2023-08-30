@@ -32,6 +32,8 @@ func TestCreateFilter(t *testing.T) {
 	r.True(f.ParentIDs[0] == "123456789012")
 	r.True(f.IDs[0] == "abc")
 
-	f = CreateFilter([]string{"status=active"})
-	r.True(f.Status == types.StatusActive)
+	f = CreateFilter([]string{"status=active,warning"})
+	r.True(len(f.Status) == 2)
+	r.True(f.Status[0] == types.StatusValid)
+	r.True(f.Status[1] == types.StatusWarning)
 }

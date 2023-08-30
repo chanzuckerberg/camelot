@@ -2,11 +2,9 @@ package types
 
 type Status string
 
-const StatusActive = "ACTIVE"
-const StatusEndOfLife = "ENDOFLIFE"
+const StatusValid = "VALID"
 const StatusWarning = "WARNING"
 const StatusCritical = "CRITICAL"
-const StatusOutdated = "OUTDATED"
 
 type ResourceKind string
 
@@ -38,12 +36,12 @@ type GitOpsReference struct {
 
 type ParentResource struct {
 	Kind ResourceKind `json:"kind,omitempty"`
-	ID   string       `json:"name,omitempty"`
+	ID   string       `json:"id,omitempty"`
 }
 
 type VersionedResource struct {
 	Kind            ResourceKind     `json:"kind,omitempty"`
-	Name            string           `json:"name,omitempty"`
+	ID              string           `json:"id,omitempty"`
 	Arn             string           `json:"arn,omitempty"`
 	Parents         []ParentResource `json:"parents,omitempty"`
 	Version         string           `json:"version,omitempty"`

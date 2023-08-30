@@ -11,10 +11,11 @@ import (
 
 type ReportFilter struct {
 	ResourceKinds []types.ResourceKind // TODO: Support logical operators
-	ParentKinds   []types.ResourceKind // TODO: Support logical operators
-	ParentIDs     []string             // TODO: Support logical operators
-	IDs           []string             // TODO: Support logical operators
-	Status        types.Status         // TODO: Support multiple statuses, and logical operators
+	ParentKinds   []types.ResourceKind
+	ParentIDs     []string
+	IDs           []string
+	Status        []types.Status
+	Version       string
 }
 
 func ReportToTable(report types.InventoryReport) [][]string {
@@ -61,7 +62,7 @@ func versionedResourceToTableRow(item types.VersionedResource) []string {
 	}
 	return []string{
 		string(item.Kind),
-		truncate(item.Name, 80),
+		truncate(item.ID, 80),
 		truncate(sb.String(), 80),
 		item.Version,
 		item.CurrentVersion,
@@ -158,20 +159,67 @@ func isMatch(item types.VersionedResource, filter ReportFilter) bool {
 			return false
 		}
 	}
-	if len(filter.ParentKinds) > 0 {
-		found := false
+
+	if len(filter.ParentKinds) > 0 || len(filter.ParentIDs) > 0 {
 		for _, parent := range item.Parents {
-			for _, kind := range filter.ParentKinds {
-				if parent.Kind == kind {
-					found = true
-					break
+			kindFound := true
+			if len(filter.ParentKinds) > 0 {
+				kindFound = false
+				for _, kind := range filter.ParentKinds {
+					if parent.Kind == kind {
+						kindFound = true
+						break
+					}
 				}
+			}
+			idFound := true
+			if len(filter.ParentIDs) > 0 {
+				idFound = false
+				for _, id := range filter.ParentIDs {
+					if parent.ID == id {
+						idFound = true
+						break
+					}
+				}
+			}
+			if !idFound && !kindFound {
+				return false
+			}
+		}
+	}
+
+	if len(filter.IDs) > 0 {
+		found := false
+		for _, id := range filter.IDs {
+			if item.ID == id {
+				found = true
+				break
 			}
 		}
 		if !found {
 			return false
 		}
 	}
+
+	if len(filter.Status) > 0 {
+		found := false
+		for _, status := range filter.Status {
+			if item.EOL.Status == status {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+
+	if len(filter.Version) > 0 {
+		if item.Version != filter.Version {
+			return false
+		}
+	}
+
 	return true
 }
 
@@ -200,7 +248,12 @@ func CreateFilter(f []string) ReportFilter {
 		}
 		switch parts[0] {
 		case "status":
-			filter.Status = types.Status(strings.ToUpper(parts[1]))
+			statuses := strings.Split(strings.ToUpper(parts[1]), ",")
+			for _, status := range statuses {
+				filter.Status = append(filter.Status, types.Status(status))
+			}
+		case "version":
+			filter.Version = parts[1]
 		case "id":
 			filter.IDs = append(filter.IDs, parts[1])
 		case "kind":

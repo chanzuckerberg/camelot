@@ -63,7 +63,7 @@ func extractRds(ctx context.Context, awsClient interfaces.AWSClient) (*types.Inv
 		rdsClusters = append(rdsClusters, types.RDSCluster{
 			Engine: *instance.Engine,
 			VersionedResource: types.VersionedResource{
-				Name:           *instance.DBClusterIdentifier,
+				ID:             *instance.DBClusterIdentifier,
 				Kind:           types.KindRDSCluster,
 				Parents:        []types.ParentResource{{Kind: types.KindAWSAccount, ID: awsClient.GetAccountId()}},
 				Arn:            *instance.DBClusterArn,

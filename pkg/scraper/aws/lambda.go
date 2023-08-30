@@ -55,7 +55,7 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 		logrus.Debugf("lambda function: %s -> %s [%d]", *function.FunctionArn, function.Runtime, daysDiff)
 		lambdas = append(lambdas, types.Lambda{
 			VersionedResource: types.VersionedResource{
-				Name:           *function.FunctionName,
+				ID:             *function.FunctionName,
 				Kind:           types.KindLambda,
 				Parents:        []types.ParentResource{{Kind: types.KindAWSAccount, ID: awsClient.GetAccountId()}},
 				Arn:            *function.FunctionArn,
