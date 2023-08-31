@@ -68,6 +68,7 @@ func Scrape() (*types.InventoryReport, error) {
 	mostPopularVersion, err := getMostPopularTerraformVersion(tfcWorkspaces)
 	if err == nil {
 		for i, tfcWorkspace := range tfcWorkspaces {
+			tfcWorkspaces[i].CurrentVersion = mostPopularVersion.String()
 			v, err := version.NewVersion(tfcWorkspace.Version)
 			if err == nil && v.LessThan(mostPopularVersion) {
 				tfcWorkspaces[i].EOL.Status = types.StatusWarning
