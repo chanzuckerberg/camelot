@@ -112,7 +112,7 @@ func processCluster(ctx context.Context, awsClient interfaces.AWSClient, cluster
 		})
 	}
 
-	eksClusters := []types.EKSCluster{{
+	eksClusters := []types.Versioned{types.EKSCluster{
 		VersionedResource: types.VersionedResource{
 			ID:             *clusterInfo.Cluster.Name,
 			Kind:           types.KindEKSCluster,
@@ -130,7 +130,11 @@ func processCluster(ctx context.Context, awsClient interfaces.AWSClient, cluster
 		Addons:          eksAddons,
 	}}
 
-	return &types.InventoryReport{EksClusters: eksClusters, HelmReleases: helmReleases}, nil
+	resources := []types.Versioned{}
+	resources = append(resources, eksClusters...)
+	resources = append(resources, helmReleases...)
+
+	return &types.InventoryReport{Resources: resources}, nil
 }
 
 func createK8sConfig(ctx context.Context, awsClient interfaces.AWSClient, clusterInfo *eks.DescribeClusterOutput, clusterName string) (*rest.Config, error) {

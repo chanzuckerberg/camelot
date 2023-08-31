@@ -31,7 +31,7 @@ func extractRds(ctx context.Context, awsClient interfaces.AWSClient) (*types.Inv
 		}
 	}
 
-	rdsClusters := []types.RDSCluster{}
+	rdsClusters := []types.Versioned{}
 
 	out, err := awsClient.DescribeRDSClusters()
 	if err != nil {
@@ -77,5 +77,5 @@ func extractRds(ctx context.Context, awsClient interfaces.AWSClient) (*types.Inv
 			},
 		})
 	}
-	return &types.InventoryReport{RdsClusters: rdsClusters}, nil
+	return &types.InventoryReport{Resources: rdsClusters}, nil
 }
