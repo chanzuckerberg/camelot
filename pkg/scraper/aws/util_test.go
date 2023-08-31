@@ -17,7 +17,7 @@ func TestRemainingDays(t *testing.T) {
 
 func TestEolStatus(t *testing.T) {
 	r := require.New(t)
-	r.Equal(types.StatusEndOfLife, string(eolStatus(0)))
+	r.Equal(types.StatusCritical, string(eolStatus(0)))
 	r.Equal(types.StatusCritical, string(eolStatus(15)))
 	r.Equal(types.StatusWarning, string(eolStatus(80)))
 }
