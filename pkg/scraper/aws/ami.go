@@ -31,7 +31,7 @@ func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.In
 		return &types.InventoryReport{}, nil
 	}
 
-	machineImages := []types.MachineImage{}
+	machineImages := []types.Versioned{}
 
 	amis := maps.Keys(amiMap)
 	images, err := awsClient.DescribeAMIs(amis)
@@ -89,6 +89,6 @@ func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.In
 	}
 
 	return &types.InventoryReport{
-		MachineImages: machineImages,
+		Resources: machineImages,
 	}, nil
 }

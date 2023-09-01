@@ -28,6 +28,8 @@ func Scrape() (*types.InventoryReport, error) {
 		return nil, errors.Wrap(err, "error getting all managed assets")
 	}
 
+	tfcWorkspaces := []types.TfcWorkspace{}
+
 	for org, workspaces := range orgWorkspaces {
 		for _, workspace := range workspaces {
 			eolDate := workspace.UpdatedAt.AddDate(0, 3, 0)
@@ -59,19 +61,23 @@ func Scrape() (*types.InventoryReport, error) {
 				resource.GitOpsReference.Branch = workspace.VCSRepo.Branch
 			}
 
-			report.TfcWorkspaces = append(report.TfcWorkspaces, resource)
+			tfcWorkspaces = append(tfcWorkspaces, resource)
 		}
 	}
 
-	mostPopularVersion, err := getMostPopularTerraformVersion(report.TfcWorkspaces)
-
+	mostPopularVersion, err := getMostPopularTerraformVersion(tfcWorkspaces)
 	if err == nil {
-		for i, tfcWorkspace := range report.TfcWorkspaces {
+		for i, tfcWorkspace := range tfcWorkspaces {
+			tfcWorkspaces[i].CurrentVersion = mostPopularVersion.String()
 			v, err := version.NewVersion(tfcWorkspace.Version)
 			if err == nil && v.LessThan(mostPopularVersion) {
-				report.TfcWorkspaces[i].EOL.Status = types.StatusWarning
+				tfcWorkspaces[i].EOL.Status = types.StatusWarning
 			}
 		}
+	}
+
+	for _, tfcWorkspace := range tfcWorkspaces {
+		report.Resources = append(report.Resources, tfcWorkspace)
 	}
 
 	for _, asset := range assets {
@@ -89,7 +95,7 @@ func Scrape() (*types.InventoryReport, error) {
 								parents = append(parents, types.ParentResource{Kind: types.KindAWSAccount, ID: asset.ARN.AccountID})
 							}
 
-							report.TfcResources = append(report.TfcResources, types.TfcResource{
+							report.Resources = append(report.Resources, types.TfcResource{
 								VersionedResource: types.VersionedResource{
 									ID:      asset.ARN.Service + ":" + asset.ARN.Resource,
 									Kind:    types.KindTFCResource,

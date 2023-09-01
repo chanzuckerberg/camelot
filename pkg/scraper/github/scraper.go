@@ -45,7 +45,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 	}
 
 	report := &types.InventoryReport{
-		Repos: []types.GitRepo{},
+		Resources: []types.Versioned{},
 	}
 
 	moduleUsageMap := map[string]map[string]int{}
@@ -64,7 +64,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		}
 		modules, err := findModules(tempDir)
 		if err != nil {
-			logrus.Errorf("Unable to read modules in %s: %s", *repo.Name, err.Error())
+			logrus.Debugf("Unable to read modules in %s: %s", *repo.Name, err.Error())
 			continue
 		}
 		for _, module := range modules {
@@ -109,7 +109,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		if time.Now().After(eolDate) {
 			status = types.StatusWarning
 		}
-		report.Repos = append(report.Repos, types.GitRepo{
+		report.Resources = append(report.Resources, types.GitRepo{
 			VersionedResource: types.VersionedResource{
 				ID:      *repo.Name,
 				Kind:    types.KindGithubRepo,
@@ -172,7 +172,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 				eolDate = ref.Timestamp.AddDate(3, 0, 0).Format("2006-01-02")
 			}
 			for repo := range repos {
-				report.Modules = append(report.Modules, types.TerraformModule{
+				report.Resources = append(report.Resources, types.TerraformModule{
 					VersionedResource: types.VersionedResource{
 						ID:             strings.Replace(module, fmt.Sprintf("github.com/%s/", githubOrg), "", 1),
 						Kind:           types.KindTerrfaormModule,

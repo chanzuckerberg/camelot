@@ -18,8 +18,8 @@ import (
 
 var artifacthubCache = cmap.New[ArtifactHubSearchResults]()
 
-func getHelmReleases(ctx context.Context, config *rest.Config, namespaces []string, clusterName string) ([]types.HelmRelease, error) {
-	helmReleases := []types.HelmRelease{}
+func getHelmReleases(ctx context.Context, config *rest.Config, namespaces []string, clusterName string) ([]types.Versioned, error) {
+	helmReleases := []types.Versioned{}
 
 	for _, namespace := range namespaces {
 		helmClient, err := getHelmClient(config, namespace)

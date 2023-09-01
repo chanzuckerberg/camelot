@@ -34,7 +34,7 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 		}
 	}
 
-	lambdas := []types.Lambda{}
+	lambdas := []types.Versioned{}
 	out, err := awsClient.ListLambdaFunctions()
 	if err != nil {
 		logrus.Errorf("unable to list functions: %s", err.Error())
@@ -70,5 +70,5 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 			Engine: string(function.Runtime),
 		})
 	}
-	return &types.InventoryReport{Lambdas: lambdas}, nil
+	return &types.InventoryReport{Resources: lambdas}, nil
 }
