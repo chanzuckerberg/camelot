@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.15.0](https://github.com/chanzuckerberg/camelot/compare/v0.14.0...v0.15.0) (2023-09-01)
+
+
+### Features
+
+* Generalize internal type structures ([df34e08](https://github.com/chanzuckerberg/camelot/commit/df34e081bd4a1ac25352b757c0948b1c8601afd6))
+* Output filter support ([12f294c](https://github.com/chanzuckerberg/camelot/commit/12f294c8baf46433b2a281b2a6d31b96c931f3e7))
+
+
+### Bug Fixes
+
+* Do not assign aws account ownership resources, if they are not account specific ([9969d2a](https://github.com/chanzuckerberg/camelot/commit/9969d2a56ace54f07c2342d536c0d1e23b5d1588))
+
 ## [0.14.0](https://github.com/chanzuckerberg/camelot/compare/v0.13.1...v0.14.0) (2023-08-30)
 
 
