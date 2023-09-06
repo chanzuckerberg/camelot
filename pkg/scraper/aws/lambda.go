@@ -34,7 +34,7 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 		}
 	}
 
-	lambdas := []types.Lambda{}
+	lambdas := []types.Versioned{}
 	out, err := awsClient.ListLambdaFunctions()
 	if err != nil {
 		logrus.Errorf("unable to list functions: %s", err.Error())
@@ -55,8 +55,9 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 		logrus.Debugf("lambda function: %s -> %s [%d]", *function.FunctionArn, function.Runtime, daysDiff)
 		lambdas = append(lambdas, types.Lambda{
 			VersionedResource: types.VersionedResource{
-				Name:           *function.FunctionName,
-				Parent:         fmt.Sprintf("aws:%s", awsClient.GetAccountId()),
+				ID:             *function.FunctionName,
+				Kind:           types.KindLambda,
+				Parents:        []types.ParentResource{{Kind: types.KindAWSAccount, ID: awsClient.GetAccountId()}},
 				Arn:            *function.FunctionArn,
 				Version:        version,
 				CurrentVersion: currentCycleMap[string(function.Runtime)],
@@ -66,7 +67,8 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 					Status:        eolStatus(daysDiff),
 				},
 			},
+			Engine: string(function.Runtime),
 		})
 	}
-	return &types.InventoryReport{Lambdas: lambdas}, nil
+	return &types.InventoryReport{Resources: lambdas}, nil
 }

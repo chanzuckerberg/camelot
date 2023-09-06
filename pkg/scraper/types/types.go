@@ -2,11 +2,29 @@ package types
 
 type Status string
 
-const StatusActive = "ACTIVE"
-const StatusEndOfLife = "ENDOFLIFE"
+const StatusValid = "VALID"
 const StatusWarning = "WARNING"
 const StatusCritical = "CRITICAL"
-const StatusOutdated = "OUTDATED"
+
+type ResourceKind string
+
+const KindAWSAccount ResourceKind = "aws"
+const KindEC2Instance ResourceKind = "ec2"
+const KindMachineImage ResourceKind = "ami"
+const KindRDSCluster ResourceKind = "rds"
+const KindLambda ResourceKind = "lambda"
+const KindEKSCluster ResourceKind = "eks"
+const KindHelmRelease ResourceKind = "helm"
+const KindGithubOrg ResourceKind = "github-org"
+const KindGithubRepo ResourceKind = "github-repo"
+const KindTerrfaormModule ResourceKind = "tf-module"
+const KindTFCOrg ResourceKind = "tfc-org"
+const KindTFCWorkspace ResourceKind = "tfc-workspace"
+const KindTFCResource ResourceKind = "tfc-resource"
+
+type Versioned interface {
+	GetVersionedResource() VersionedResource
+}
 
 type EOLStatus struct {
 	EOLDate       string `json:"eol_date,omitempty"`
@@ -20,20 +38,30 @@ type GitOpsReference struct {
 	Path   string `json:"path,omitempty"`
 }
 
+type ParentResource struct {
+	Kind ResourceKind `json:"kind,omitempty"`
+	ID   string       `json:"id,omitempty"`
+}
+
 type VersionedResource struct {
-	Name            string          `json:"name,omitempty"`
-	Arn             string          `json:"arn,omitempty"`
-	Parent          string          `json:"parent,omitempty"`
-	Version         string          `json:"version,omitempty"`
-	CurrentVersion  string          `json:"current_version,omitempty"`
-	GitOpsReference GitOpsReference `json:"gitops_reference,omitempty"`
-	EOL             EOLStatus       `json:"eol,omitempty"`
+	Kind            ResourceKind     `json:"kind,omitempty"`
+	ID              string           `json:"id,omitempty"`
+	Arn             string           `json:"arn,omitempty"`
+	Parents         []ParentResource `json:"parents,omitempty"`
+	Version         string           `json:"version,omitempty"`
+	CurrentVersion  string           `json:"current_version,omitempty"`
+	GitOpsReference GitOpsReference  `json:"gitops_reference,omitempty"`
+	EOL             EOLStatus        `json:"eol,omitempty"`
 }
 
 type EKSCluster struct {
 	VersionedResource
 	PlatformVersion string            `json:"platform_version,omitempty"`
 	Addons          []EKSClusterAddon `json:"addons,omitempty"`
+}
+
+func (r EKSCluster) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
 }
 
 type EKSClusterAddon struct {
@@ -47,32 +75,65 @@ type RDSCluster struct {
 	Engine string `json:"engine,omitempty"`
 }
 
+func (r RDSCluster) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
+}
+
 type Lambda struct {
 	VersionedResource
+	Engine string `json:"engine,omitempty"`
 }
 
-type Repo struct {
+func (r Lambda) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
+}
+
+type GitRepo struct {
 	VersionedResource
 }
 
-type Module struct {
+func (r GitRepo) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
+}
+
+type TerraformModule struct {
 	VersionedResource
+}
+
+func (r TerraformModule) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
 }
 
 type HelmRelease struct {
 	VersionedResource
 }
 
+func (r HelmRelease) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
+}
+
 type MachineImage struct {
 	VersionedResource
+}
+
+func (r MachineImage) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
 }
 
 type TfcResource struct {
 	VersionedResource
 }
 
+func (r TfcResource) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
+}
+
 type TfcWorkspace struct {
 	VersionedResource
+}
+
+func (r TfcWorkspace) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
 }
 
 type Indentity struct {
@@ -81,16 +142,17 @@ type Indentity struct {
 }
 
 type InventoryReport struct {
-	Identity      Indentity      `json:"identity,omitempty"`
-	EksClusters   []EKSCluster   `json:"eks_clusters,omitempty"`
-	RdsClusters   []RDSCluster   `json:"rds_clusters,omitempty"`
-	Lambdas       []Lambda       `json:"lambdas,omitempty"`
-	Repos         []Repo         `json:"repos,omitempty"`
-	Modules       []Module       `json:"modules,omitempty"`
-	HelmReleases  []HelmRelease  `json:"helm_releases,omitempty"`
-	MachineImages []MachineImage `json:"machine_images,omitempty"`
-	TfcResources  []TfcResource  `json:"tfc_resources,omitempty"`
-	TfcWorkspaces []TfcWorkspace `json:"tfc_workspace,omitempty"`
+	Identity  Indentity   `json:"identity,omitempty"`
+	Resources []Versioned `json:"resources,omitempty"`
+	// EksClusters   []EKSCluster        `json:"eks_clusters,omitempty"`
+	// RdsClusters   []RDSCluster        `json:"rds_clusters,omitempty"`
+	// Lambdas       []Lambda            `json:"lambdas,omitempty"`
+	// Repos         []GitRepo           `json:"repos,omitempty"`
+	// Modules       []TerraformModule   `json:"modules,omitempty"`
+	// HelmReleases  []HelmRelease       `json:"helm_releases,omitempty"`
+	// MachineImages []MachineImage      `json:"machine_images,omitempty"`
+	// TfcResources  []TfcResource       `json:"tfc_resources,omitempty"`
+	// TfcWorkspaces []TfcWorkspace      `json:"tfc_workspace,omitempty"`
 }
 
 type ProductCycle struct {

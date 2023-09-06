@@ -31,7 +31,7 @@ func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.In
 		return &types.InventoryReport{}, nil
 	}
 
-	machineImages := []types.MachineImage{}
+	machineImages := []types.Versioned{}
 
 	amis := maps.Keys(amiMap)
 	images, err := awsClient.DescribeAMIs(amis)
@@ -72,8 +72,9 @@ func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.In
 		for _, instance := range instances {
 			machineImages = append(machineImages, types.MachineImage{
 				VersionedResource: types.VersionedResource{
-					Name:           *image.ImageId,
-					Parent:         "ec2:" + *instance.InstanceId,
+					ID:             *image.ImageId,
+					Kind:           types.KindMachineImage,
+					Parents:        []types.ParentResource{{Kind: types.KindEC2Instance, ID: *instance.InstanceId}},
 					Arn:            "",
 					Version:        *image.Name,
 					CurrentVersion: "", // TODO: figure out how to find the most recent version of this AMI
@@ -88,6 +89,6 @@ func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.In
 	}
 
 	return &types.InventoryReport{
-		MachineImages: machineImages,
+		Resources: machineImages,
 	}, nil
 }

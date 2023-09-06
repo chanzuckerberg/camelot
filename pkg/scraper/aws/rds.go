@@ -31,7 +31,7 @@ func extractRds(ctx context.Context, awsClient interfaces.AWSClient) (*types.Inv
 		}
 	}
 
-	rdsClusters := []types.RDSCluster{}
+	rdsClusters := []types.Versioned{}
 
 	out, err := awsClient.DescribeRDSClusters()
 	if err != nil {
@@ -63,8 +63,9 @@ func extractRds(ctx context.Context, awsClient interfaces.AWSClient) (*types.Inv
 		rdsClusters = append(rdsClusters, types.RDSCluster{
 			Engine: *instance.Engine,
 			VersionedResource: types.VersionedResource{
-				Name:           *instance.DBClusterIdentifier,
-				Parent:         fmt.Sprintf("aws:%s", awsClient.GetAccountId()),
+				ID:             *instance.DBClusterIdentifier,
+				Kind:           types.KindRDSCluster,
+				Parents:        []types.ParentResource{{Kind: types.KindAWSAccount, ID: awsClient.GetAccountId()}},
 				Arn:            *instance.DBClusterArn,
 				Version:        *instance.EngineVersion,
 				CurrentVersion: currentCycleMap[*instance.Engine],
@@ -76,5 +77,5 @@ func extractRds(ctx context.Context, awsClient interfaces.AWSClient) (*types.Inv
 			},
 		})
 	}
-	return &types.InventoryReport{RdsClusters: rdsClusters}, nil
+	return &types.InventoryReport{Resources: rdsClusters}, nil
 }

@@ -18,8 +18,8 @@ import (
 
 var artifacthubCache = cmap.New[ArtifactHubSearchResults]()
 
-func getHelmReleases(ctx context.Context, config *rest.Config, namespaces []string, clusterName string) ([]types.HelmRelease, error) {
-	helmReleases := []types.HelmRelease{}
+func getHelmReleases(ctx context.Context, config *rest.Config, namespaces []string, clusterName string) ([]types.Versioned, error) {
+	helmReleases := []types.Versioned{}
 
 	for _, namespace := range namespaces {
 		helmClient, err := getHelmClient(config, namespace)
@@ -47,7 +47,7 @@ func getHelmReleases(ctx context.Context, config *rest.Config, namespaces []stri
 				continue
 			}
 
-			var status types.Status = types.StatusActive
+			var status types.Status = types.StatusValid
 
 			if len(charts) == 1 {
 				// Only one match found, use it
@@ -73,8 +73,12 @@ func getHelmReleases(ctx context.Context, config *rest.Config, namespaces []stri
 				}
 			}
 
-			if newestVersion != nil && activeVersion.Compare(newestVersion) < 0 {
-				status = types.StatusOutdated
+			if newestVersion != nil {
+				if activeVersion.Major() < newestVersion.Major() {
+					status = types.StatusCritical
+				} else if activeVersion.Minor() < newestVersion.Minor() {
+					status = types.StatusWarning
+				}
 			}
 
 			currentVersionStr := ""
@@ -83,9 +87,10 @@ func getHelmReleases(ctx context.Context, config *rest.Config, namespaces []stri
 			}
 			helmReleases = append(helmReleases, types.HelmRelease{
 				VersionedResource: types.VersionedResource{
-					Name:           fmt.Sprintf("%s/%s", namespace, release.Name),
+					ID:             fmt.Sprintf("%s/%s", namespace, release.Name),
+					Kind:           types.KindHelmRelease,
 					Arn:            "",
-					Parent:         fmt.Sprintf("eks:%s", clusterName),
+					Parents:        []types.ParentResource{{Kind: types.KindEKSCluster, ID: clusterName}},
 					Version:        activeVersion.String(),
 					CurrentVersion: currentVersionStr,
 					EOL: types.EOLStatus{

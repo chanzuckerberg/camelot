@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/eks/types"
 	mock_interfaces "github.com/chanzuckerberg/camelot/mocks/mock_aws"
+	scraper_types "github.com/chanzuckerberg/camelot/pkg/scraper/types"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
@@ -79,8 +80,14 @@ func TestListEKSClusters(t *testing.T) {
 	report, err := extractEksClusterInfo(context.Background(), mockClient)
 	r.NoError(err)
 	r.NotNil(report)
-	r.Equal(2, len((*report).EksClusters))
-	for _, cluster := range (*report).EksClusters {
+	r.Equal(2, len((*report).Resources))
+	for _, resource := range (*report).Resources {
+		switch resource.(type) {
+		case scraper_types.EKSCluster:
+		default:
+			r.Fail("unexpected type")
+		}
+		cluster := resource.(scraper_types.EKSCluster)
 		r.Equal("eks.1", cluster.PlatformVersion)
 		r.GreaterOrEqual(cluster.EOL.RemainingDays, 0)
 	}

@@ -39,6 +39,7 @@ TFE_ADDRESS=<ADDRESS> TFE_TOKEN=<TOKEN> ./camelot scrape tfc
 All scraping commands accept the following flags:
 * `-v`: verbose mode
 * `-o`: output format, could be `json`, `yaml` or `text` (`text` is default)
+* `-f`: report filter (this flag can be repeated multiple times), supported expressions are: `id=<ID>`, `kind=<RESOURCE_KIND>`, `parent.kind=<PARENT_KIND>`, `parent.id=<ID>`, `status=<STATUS>[,<STATUS1>]`, `version=<VERSION>`. For example: `camelot scrape tfc -f kind=tfc-workspace -f parent.kind=tfc-org -f parent.id=my-infra -f status=warning,critical -f version=0.13.5`.
 
 ## Contributors
 This project was initially developed by [Alex Lokshin](https://github.com/alexlokshin-czi), [Alex Biju](https://github.com/abiju-czi), [Hayden Spitzley](https://github.com/hspitzley-czi), and [Travis Fields](https://github.com/cyberious).

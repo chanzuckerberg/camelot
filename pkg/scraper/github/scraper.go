@@ -45,7 +45,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 	}
 
 	report := &types.InventoryReport{
-		Repos: []types.Repo{},
+		Resources: []types.Versioned{},
 	}
 
 	moduleUsageMap := map[string]map[string]int{}
@@ -64,7 +64,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		}
 		modules, err := findModules(tempDir)
 		if err != nil {
-			logrus.Errorf("Unable to read modules in %s: %s", *repo.Name, err.Error())
+			logrus.Debugf("Unable to read modules in %s: %s", *repo.Name, err.Error())
 			continue
 		}
 		for _, module := range modules {
@@ -105,15 +105,16 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		}
 
 		eolDate := date.AddDate(3, 0, 0)
-		var status types.Status = types.StatusActive
+		var status types.Status = types.StatusValid
 		if time.Now().After(eolDate) {
-			status = types.StatusOutdated
+			status = types.StatusWarning
 		}
-		report.Repos = append(report.Repos, types.Repo{
+		report.Resources = append(report.Resources, types.GitRepo{
 			VersionedResource: types.VersionedResource{
-				Name:    *repo.Name,
+				ID:      *repo.Name,
+				Kind:    types.KindGithubRepo,
 				Arn:     "",
-				Parent:  githubOrg,
+				Parents: []types.ParentResource{{Kind: types.KindGithubOrg, ID: githubOrg}},
 				Version: "0.0.0",
 				EOL: types.EOLStatus{
 					EOLDate:       eolDate.Format("2006-01-02"),
@@ -163,19 +164,20 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		for index, ref := range moduleRefs {
 			repos := repoModuleReferenceMap[fmt.Sprintf("%s?ref=%s", module, ref.Ref)]
 			var status types.Status
-			status = types.StatusOutdated
+			status = types.StatusWarning
 			eolDate := ref.Timestamp.Format("2006-01-02")
 			if index == 0 {
-				status = types.StatusActive
+				status = types.StatusValid
 				// Assume modules are supported for 3 years
 				eolDate = ref.Timestamp.AddDate(3, 0, 0).Format("2006-01-02")
 			}
 			for repo := range repos {
-				report.Modules = append(report.Modules, types.Module{
+				report.Resources = append(report.Resources, types.TerraformModule{
 					VersionedResource: types.VersionedResource{
-						Name:           strings.Replace(module, fmt.Sprintf("github.com/%s/", githubOrg), "", 1),
+						ID:             strings.Replace(module, fmt.Sprintf("github.com/%s/", githubOrg), "", 1),
+						Kind:           types.KindTerrfaormModule,
 						Arn:            "",
-						Parent:         fmt.Sprintf("repo:%s", repo),
+						Parents:        []types.ParentResource{{Kind: types.KindGithubRepo, ID: repo}},
 						Version:        ref.Ref,
 						CurrentVersion: moduleRefs[0].Ref,
 						EOL: types.EOLStatus{
