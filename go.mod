@@ -15,7 +15,7 @@ require (
 	github.com/chanzuckerberg/go-misc v1.10.5
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
-	github.com/hashicorp/go-tfe v1.32.1
+	github.com/hashicorp/go-tfe v1.33.0
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/hcl/v2 v2.18.0
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23
