@@ -5,8 +5,8 @@ go 1.20
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.21.0
-	github.com/aws/aws-sdk-go-v2/config v1.18.38
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.115.0
+	github.com/aws/aws-sdk-go-v2/config v1.18.39
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.117.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.5
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.39.5
 	github.com/aws/aws-sdk-go-v2/service/rds v1.54.0
@@ -26,7 +26,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63
-	golang.org/x/oauth2 v0.11.0
+	golang.org/x/oauth2 v0.12.0
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.28.1
@@ -47,21 +47,21 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.13 // indirect
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.36 // indirect
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.37 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.41 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.35 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.42 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.35 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.13.6 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.5 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.6 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/containerd/containerd v1.7.5 // indirect
-	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
+	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/cli v23.0.1+incompatible // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
@@ -151,12 +151,12 @@ require (
 	go.opentelemetry.io/otel/metric v1.17.0 // indirect
 	go.opentelemetry.io/otel/trace v1.17.0 // indirect
 	go.starlark.net v0.0.0-20230814145427-12f4cb8177e4 // indirect
-	golang.org/x/crypto v0.12.0 // indirect
-	golang.org/x/net v0.14.0 // indirect
+	golang.org/x/crypto v0.13.0 // indirect
+	golang.org/x/net v0.15.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/term v0.11.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
+	golang.org/x/term v0.12.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
