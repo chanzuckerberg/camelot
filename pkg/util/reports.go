@@ -109,7 +109,7 @@ func isMatch(item types.VersionedResource, filter ReportFilter) bool {
 					}
 				}
 			}
-			if !idFound && !kindFound {
+			if !idFound || !kindFound {
 				return false
 			}
 		}
