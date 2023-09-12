@@ -19,13 +19,34 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func NewAWSClient(ctx context.Context, profile, region, roleARN string) (interfaces.AWSClient, error) {
-	client := &awsClient{
-		ctx:     ctx,
-		profile: profile,
-		region:  region,
-		roleARN: roleARN,
+type AWSClientOpt func(*awsClient)
+
+func WithRegion(region string) AWSClientOpt {
+	return func(c *awsClient) {
+		c.region = region
 	}
+}
+
+func WithProfile(profile string) AWSClientOpt {
+	return func(c *awsClient) {
+		c.profile = profile
+	}
+}
+
+func WithRoleARN(roleARN string) AWSClientOpt {
+	return func(c *awsClient) {
+		c.roleARN = roleARN
+	}
+}
+
+func NewAWSClient(ctx context.Context, opts ...AWSClientOpt) (interfaces.AWSClient, error) {
+	client := &awsClient{
+		ctx: ctx,
+	}
+	for _, opt := range opts {
+		opt(client)
+	}
+
 	err := client.loadConfig()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load config")
@@ -44,6 +65,10 @@ type awsClient struct {
 
 func (a *awsClient) GetAccountId() string {
 	return a.accountId
+}
+
+func (a *awsClient) GetProfile() string {
+	return a.profile
 }
 
 func (a *awsClient) GetConfig() *aws.Config {

@@ -41,7 +41,7 @@ func scrape(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, profile := range profiles {
-		awsClient, err := scraper.NewAWSClient(cmd.Context(), profile, "", "")
+		awsClient, err := scraper.NewAWSClient(cmd.Context(), scraper.WithProfile(profile))
 		if err != nil {
 			logrus.Errorf("failed to load config for profile %s: %s", profile, err.Error())
 			continue
@@ -57,7 +57,7 @@ func scrape(cmd *cobra.Command, args []string) error {
 		}
 		accountMap[accountNumber] = true
 
-		report, err := scraper.Scrape(profile, "")
+		report, err := scraper.Scrape(scraper.WithProfile(profile))
 		if err != nil {
 			logrus.Errorf("failed to scrape resources for profile %s: %s", profile, err.Error())
 		}

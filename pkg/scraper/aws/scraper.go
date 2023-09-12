@@ -13,13 +13,10 @@ import (
 )
 
 // If profile is not passed it is assumed implicitly based on environment variables, like AWS_PROFILE
-func Scrape(profile, roleARN string) (*types.InventoryReport, error) {
-	if len(profile) > 0 {
-		logrus.Debugf("Scraping profile %s", profile)
-	}
+func Scrape(opts ...AWSClientOpt) (*types.InventoryReport, error) {
 	ctx := context.Background()
 
-	awsClient, err := NewAWSClient(ctx, profile, "", roleARN)
+	awsClient, err := NewAWSClient(ctx, opts...)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load config")
 	}
@@ -39,10 +36,10 @@ func Scrape(profile, roleARN string) (*types.InventoryReport, error) {
 	index := 0
 
 	for _, region := range regions {
-		logrus.Debugf("Scraping profile %s, region %s", profile, region)
-		client, err := NewAWSClient(ctx, profile, region, roleARN)
+		logrus.Debugf("Scraping profile %s, region %s", awsClient.GetProfile(), region)
+		client, err := NewAWSClient(ctx, append(opts, WithRegion(region))...)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to load config for profile %s, region %s", profile, region)
+			return nil, errors.Wrapf(err, "failed to load config for profile %s, region %s", awsClient.GetProfile(), region)
 		}
 
 		for _, extractor := range extractors {
@@ -64,7 +61,7 @@ func Scrape(profile, roleARN string) (*types.InventoryReport, error) {
 	summary := util.CombineReports(reports)
 	summary.Identity = types.Indentity{
 		AwsAccountNumber: awsClient.GetAccountId(),
-		AwsProfile:       profile,
+		AwsProfile:       awsClient.GetProfile(),
 	}
 
 	return &summary, nil

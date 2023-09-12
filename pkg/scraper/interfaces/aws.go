@@ -14,6 +14,7 @@ import (
 //go:generate mockgen -source=$GOFILE -destination=../../../mocks/mock_aws/mock_$GOFILE
 type AWSClient interface {
 	GetAccountId() string
+	GetProfile() string
 	GetConfig() *aws.Config
 	GetEKSClusters() ([]string, error)
 	DescribeEKSCluster(cluster string) (*eks.DescribeClusterOutput, error)
