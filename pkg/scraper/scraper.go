@@ -8,8 +8,8 @@ import (
 )
 
 // Depends on env.AWS_PROFILE
-func ScrapeAWS(profile string) (*types.InventoryReport, error) {
-	return aws.Scrape(profile)
+func ScrapeAWS(roleARN string) (*types.InventoryReport, error) {
+	return aws.Scrape("", roleARN)
 }
 
 // Depends on env.GITHUB_TOKEN

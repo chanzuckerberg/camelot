@@ -42,7 +42,7 @@ func TestListEKSClusters(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockClient := mock_interfaces.NewMockAWSClient(ctrl)
 	mockClient.EXPECT().GetAccountId().Return("123456789012").AnyTimes()
-	mockClient.EXPECT().GetConfig().Return(aws.Config{
+	mockClient.EXPECT().GetConfig().Return(&aws.Config{
 		Region: "us-west-2",
 	}).AnyTimes()
 	mockClient.EXPECT().GetEKSClusters().Return([]string{"cluster1", "cluster2"}, nil).AnyTimes()

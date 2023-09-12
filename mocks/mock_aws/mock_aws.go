@@ -115,10 +115,10 @@ func (mr *MockAWSClientMockRecorder) GetAccountId() *gomock.Call {
 }
 
 // GetConfig mocks base method.
-func (m *MockAWSClient) GetConfig() aws.Config {
+func (m *MockAWSClient) GetConfig() *aws.Config {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetConfig")
-	ret0, _ := ret[0].(aws.Config)
+	ret0, _ := ret[0].(*aws.Config)
 	return ret0
 }
 

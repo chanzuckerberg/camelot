@@ -13,13 +13,13 @@ import (
 )
 
 // If profile is not passed it is assumed implicitly based on environment variables, like AWS_PROFILE
-func Scrape(profile string) (*types.InventoryReport, error) {
+func Scrape(profile, roleARN string) (*types.InventoryReport, error) {
 	if len(profile) > 0 {
 		logrus.Debugf("Scraping profile %s", profile)
 	}
 	ctx := context.Background()
 
-	awsClient, err := NewAWSClient(ctx, profile, "")
+	awsClient, err := NewAWSClient(ctx, profile, "", roleARN)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load config")
 	}
@@ -40,7 +40,7 @@ func Scrape(profile string) (*types.InventoryReport, error) {
 
 	for _, region := range regions {
 		logrus.Debugf("Scraping profile %s, region %s", profile, region)
-		client, err := NewAWSClient(ctx, profile, region)
+		client, err := NewAWSClient(ctx, profile, region, roleARN)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to load config for profile %s, region %s", profile, region)
 		}
