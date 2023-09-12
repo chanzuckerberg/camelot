@@ -47,7 +47,7 @@ This project was initially developed by [Alex Lokshin](https://github.com/alexlo
 ## Contributing
 Contributions and ideas are welcome! Please don't hesitate to open an issue, join our [gitter chat room](https://gitter.im/chanzuckerberg/camelot), or send a pull request.
 
-Go version >= 1.20 required.
+Go version >= 1.21 required.
 
 This project is governed under the [Contributor Covenant](https://www.contributor-covenant.org/version/1/4/code-of-conduct) code of conduct.
 
