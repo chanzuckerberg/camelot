@@ -163,7 +163,7 @@ func createK8sConfig(ctx context.Context, awsClient interfaces.AWSClient, cluste
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to create kubeconfig")
 	}
-	sc := sts.NewFromConfig(awsClient.GetConfig())
+	sc := sts.NewFromConfig(*awsClient.GetConfig())
 	stsClient := sts.NewPresignClient(sc)
 
 	presignedURLRequest, _ := stsClient.PresignGetCallerIdentity(ctx, &sts.GetCallerIdentityInput{}, func(presignOptions *sts.PresignOptions) {

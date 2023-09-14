@@ -13,6 +13,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/eks/types"
+	"github.com/aws/aws-sdk-go-v2/service/lambda"
+	"github.com/aws/aws-sdk-go-v2/service/rds"
+	rds_types "github.com/aws/aws-sdk-go-v2/service/rds/types"
 	mock_interfaces "github.com/chanzuckerberg/camelot/mocks/mock_aws"
 	scraper_types "github.com/chanzuckerberg/camelot/pkg/scraper/types"
 	"github.com/golang/mock/gomock"
@@ -42,7 +45,7 @@ func TestListEKSClusters(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	mockClient := mock_interfaces.NewMockAWSClient(ctrl)
 	mockClient.EXPECT().GetAccountId().Return("123456789012").AnyTimes()
-	mockClient.EXPECT().GetConfig().Return(aws.Config{
+	mockClient.EXPECT().GetConfig().Return(&aws.Config{
 		Region: "us-west-2",
 	}).AnyTimes()
 	mockClient.EXPECT().GetEKSClusters().Return([]string{"cluster1", "cluster2"}, nil).AnyTimes()
@@ -124,4 +127,52 @@ func generateCert(san []string, orgName string) ([]byte, error) {
 	})
 
 	return certOut, nil
+}
+
+func TestListRDSClusters(t *testing.T) {
+	r := require.New(t)
+
+	caData, err := generateCert([]string{"localhost", "endpoint.com"}, "endpoint.com")
+	r.NoError(err)
+
+	certPool := x509.NewCertPool()
+	ok := certPool.AppendCertsFromPEM([]byte(caData))
+	r.True(ok)
+
+	ctrl := gomock.NewController(t)
+	mockClient := mock_interfaces.NewMockAWSClient(ctrl)
+	mockClient.EXPECT().GetAccountId().Return("123456789012").AnyTimes()
+	mockClient.EXPECT().GetConfig().Return(&aws.Config{
+		Region: "us-west-2",
+	}).AnyTimes()
+
+	mockClient.EXPECT().DescribeRDSClusters().Return(&rds.DescribeDBClustersOutput{
+		DBClusters: []rds_types.DBCluster{},
+	}, nil)
+
+	_, err = mockClient.DescribeRDSClusters()
+	r.NoError(err)
+}
+
+func TestListLambdas(t *testing.T) {
+	r := require.New(t)
+
+	caData, err := generateCert([]string{"localhost", "endpoint.com"}, "endpoint.com")
+	r.NoError(err)
+
+	certPool := x509.NewCertPool()
+	ok := certPool.AppendCertsFromPEM([]byte(caData))
+	r.True(ok)
+
+	ctrl := gomock.NewController(t)
+	mockClient := mock_interfaces.NewMockAWSClient(ctrl)
+	mockClient.EXPECT().GetAccountId().Return("123456789012").AnyTimes()
+	mockClient.EXPECT().GetConfig().Return(&aws.Config{
+		Region: "us-west-2",
+	}).AnyTimes()
+
+	mockClient.EXPECT().ListLambdaFunctions().Return(&lambda.ListFunctionsOutput{}, nil)
+
+	_, err = mockClient.ListLambdaFunctions()
+	r.NoError(err)
 }
