@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.21.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.39
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.37
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.117.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.118.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.29.5
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.39.5
 	github.com/aws/aws-sdk-go-v2/service/rds v1.54.0
@@ -30,7 +30,7 @@ require (
 	golang.org/x/oauth2 v0.12.0
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/apimachinery v0.28.1
+	k8s.io/apimachinery v0.28.2
 	k8s.io/client-go v0.28.1
 )
 
