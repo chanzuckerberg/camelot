@@ -17,12 +17,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var terraformBlockSchema = &hcl.BodySchema{
+var moduleBlockSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
 		{
 			Type:       "module",
 			LabelNames: []string{"name"},
 		},
+	},
+}
+
+var providerBlockSchema = &hcl.BodySchema{
+	Blocks: []hcl.BlockHeaderSchema{
 		{
 			Type: "terraform",
 		},
@@ -237,7 +242,7 @@ func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
 			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
 		}
 
-		content, _, diags := f.Body.PartialContent(terraformBlockSchema)
+		content, _, diags := f.Body.PartialContent(providerBlockSchema)
 		if diags.HasErrors() {
 			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 		}
@@ -247,7 +252,7 @@ func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
 				continue
 			}
 
-			content, _ := block.Body.Content(terraformBlockSchema)
+			content, _ := block.Body.Content(providerBlockSchema)
 			for _, innerBlock := range content.Blocks {
 				if innerBlock.Type != "required_providers" {
 					continue
@@ -307,31 +312,12 @@ func findModules(dir string) ([]string, error) {
 			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
 		}
 
-		content, _, diags := f.Body.PartialContent(terraformBlockSchema)
+		content, _, diags := f.Body.PartialContent(moduleBlockSchema)
 		if diags.HasErrors() {
 			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 		}
 
 		for _, block := range content.Blocks {
-			if block.Type == "terraform" {
-				content, _ := block.Body.Content(terraformBlockSchema)
-				for _, innerBlock := range content.Blocks {
-					if innerBlock.Type != "required_providers" {
-						continue
-					}
-
-					attrs, _ := innerBlock.Body.JustAttributes()
-					for name, attr := range attrs {
-						attrVal, err := attr.Expr.Value(nil)
-						if err != nil {
-							continue
-						}
-						if version, ok := attrVal.AsValueMap()["version"]; ok {
-							logrus.Infof("%s: %s", name, version.AsString())
-						}
-					}
-				}
-			}
 			if block.Type != "module" {
 				continue
 			}
