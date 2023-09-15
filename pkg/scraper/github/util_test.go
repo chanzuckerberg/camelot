@@ -119,4 +119,7 @@ func TestVersionConstraint(t *testing.T) {
 
 	res = checkProviderVersion(">= 1.0.0", "7.0.0")
 	r.False(res)
+
+	res = checkProviderVersion("~> 3.4", "4.0.0")
+	r.False(res)
 }

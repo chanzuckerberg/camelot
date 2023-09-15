@@ -312,26 +312,30 @@ func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
 						mostCurrentVer = provider.Version
 					}
 
-					if versionConstraint != "" {
-						constraint, err := version.NewConstraint(versionConstraint)
-						mostCurrentVersion := version.Must(version.NewVersion(mostCurrentVer))
-						if err == nil {
-							if !constraint.Check(mostCurrentVersion) {
-								eol.Status = types.StatusCritical
-								fmt.Printf("FAIL CURRENT: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
-							} else {
-								fmt.Printf("OK: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
-								majorVer := mostCurrentVersion.Segments()[0]
-								if majorVer > 2 {
-									lowestSupportedVer := version.Must(version.NewVersion(fmt.Sprintf("%d.0.0", majorVer-2)))
-									if !constraint.Check(lowestSupportedVer) {
-										eol.Status = types.StatusCritical
-										fmt.Printf("FAIL OLD: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
-									}
-								}
-							}
-						}
+					if !checkProviderVersion(versionConstraint, mostCurrentVer) {
+						eol.Status = types.StatusCritical
 					}
+
+					// if versionConstraint != "" {
+					// 	constraint, err := version.NewConstraint(versionConstraint)
+					// 	mostCurrentVersion := version.Must(version.NewVersion(mostCurrentVer))
+					// 	if err == nil {
+					// 		if !constraint.Check(mostCurrentVersion) {
+					// 			eol.Status = types.StatusCritical
+					// 			fmt.Printf("FAIL CURRENT: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
+					// 		} else {
+					// 			fmt.Printf("OK: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
+					// 			majorVer := mostCurrentVersion.Segments()[0]
+					// 			if majorVer > 2 {
+					// 				lowestSupportedVer := version.Must(version.NewVersion(fmt.Sprintf("%d.0.0", majorVer-2)))
+					// 				if !constraint.Check(lowestSupportedVer) {
+					// 					eol.Status = types.StatusCritical
+					// 					fmt.Printf("FAIL OLD: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
+					// 				}
+					// 			}
+					// 		}
+					// 	}
+					// }
 
 					providers = append(providers, types.TfcProvider{
 						VersionedResource: types.VersionedResource{
@@ -449,6 +453,10 @@ func getProviderDetails(providerID string) (*HashicorpProviderResponse, error) {
 }
 
 func checkProviderVersion(verConstraint, mostCurrentVer string) bool {
+	if verConstraint == "" || mostCurrentVer == "" {
+		return true
+	}
+
 	constraint, err := version.NewConstraint(verConstraint)
 	if err != nil {
 		return false
@@ -462,9 +470,13 @@ func checkProviderVersion(verConstraint, mostCurrentVer string) bool {
 	majorVer := mostCurrentVersion.Segments()[0]
 	if majorVer >= 2 {
 		lowestSupportedVer := findLowestSupportedVersion(constraint)
-		majorLowestVer := lowestSupportedVer.Segments()[0]
-		if majorLowestVer < majorVer-2 {
-			return false
+		if lowestSupportedVer == nil || len(lowestSupportedVer.Segments()) == 0 {
+			fmt.Printf("Unable to find lowest supported version for %s\n", verConstraint)
+		} else {
+			majorLowestVer := lowestSupportedVer.Segments()[0]
+			if majorLowestVer < majorVer-2 {
+				return false
+			}
 		}
 	}
 
@@ -473,12 +485,12 @@ func checkProviderVersion(verConstraint, mostCurrentVer string) bool {
 
 func findLowestSupportedVersion(constraint version.Constraints) *version.Version {
 	for maj := 0; maj < 1000; maj++ {
-
-		ver := version.Must(version.NewVersion(fmt.Sprintf("%d.0.0", maj)))
-		if constraint.Check(ver) {
-			return ver
+		for min := 0; min < 1000; min++ {
+			ver := version.Must(version.NewVersion(fmt.Sprintf("%d.%d.0", maj, min)))
+			if constraint.Check(ver) {
+				return ver
+			}
 		}
-
 	}
 	return nil
 }
