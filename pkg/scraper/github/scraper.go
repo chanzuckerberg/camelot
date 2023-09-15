@@ -17,10 +17,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var moduleBlockSchema = &hcl.BodySchema{
+var terraformBlockSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
 		{
 			Type:       "module",
+			LabelNames: []string{"name"},
+		},
+		{
+			Type: "terraform",
+		},
+		{
+			Type: "required_providers",
+		},
+		{
+			Type:       "provider",
 			LabelNames: []string{"name"},
 		},
 	},
@@ -61,6 +71,12 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		err = cloneRepo(*repo.CloneURL, *repo.Name, tempDir)
 		if err != nil {
 			return nil, errors.Wrap(err, "Unable to clone repo")
+		}
+		providers, err := findProviders(*repo.Name, "main", tempDir)
+		if err == nil {
+			report.Resources = append(report.Resources, providers...)
+		} else {
+			logrus.Debugf("Unable to read providers in %s: %s", *repo.Name, err.Error())
 		}
 		modules, err := findModules(tempDir)
 		if err != nil {
@@ -195,6 +211,76 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 	return report, nil
 }
 
+func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
+	providers := []types.Versioned{}
+	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			if d.Name() == ".terraform" || d.Name() == ".git" {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if filepath.Ext(path) != ".tf" {
+			return nil
+		}
+
+		b, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
+		if diags.HasErrors() {
+			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
+		}
+
+		content, _, diags := f.Body.PartialContent(terraformBlockSchema)
+		if diags.HasErrors() {
+			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+		}
+
+		for _, block := range content.Blocks {
+			if block.Type != "terraform" {
+				continue
+			}
+
+			content, _ := block.Body.Content(terraformBlockSchema)
+			for _, innerBlock := range content.Blocks {
+				if innerBlock.Type != "required_providers" {
+					continue
+				}
+
+				attrs, _ := innerBlock.Body.JustAttributes()
+				for name, attr := range attrs {
+					attrVal, err := attr.Expr.Value(nil)
+					if err != nil {
+						continue
+					}
+					if version, ok := attrVal.AsValueMap()["version"]; ok {
+						providers = append(providers, types.TfcProvider{
+							VersionedResource: types.VersionedResource{
+								ID:      name,
+								Kind:    types.KindTFCProvider,
+								Version: version.AsString(),
+								GitOpsReference: types.GitOpsReference{
+									Repo:   repo,
+									Branch: branch,
+									Path:   strings.TrimPrefix(path, dir+"/"),
+								},
+							},
+						})
+					}
+				}
+			}
+		}
+		return nil
+	})
+	return providers, err
+}
+
 func findModules(dir string) ([]string, error) {
 	modules := []string{}
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
@@ -221,12 +307,31 @@ func findModules(dir string) ([]string, error) {
 			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
 		}
 
-		content, _, diags := f.Body.PartialContent(moduleBlockSchema)
+		content, _, diags := f.Body.PartialContent(terraformBlockSchema)
 		if diags.HasErrors() {
 			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
 		}
 
 		for _, block := range content.Blocks {
+			if block.Type == "terraform" {
+				content, _ := block.Body.Content(terraformBlockSchema)
+				for _, innerBlock := range content.Blocks {
+					if innerBlock.Type != "required_providers" {
+						continue
+					}
+
+					attrs, _ := innerBlock.Body.JustAttributes()
+					for name, attr := range attrs {
+						attrVal, err := attr.Expr.Value(nil)
+						if err != nil {
+							continue
+						}
+						if version, ok := attrVal.AsValueMap()["version"]; ok {
+							logrus.Infof("%s: %s", name, version.AsString())
+						}
+					}
+				}
+			}
 			if block.Type != "module" {
 				continue
 			}
