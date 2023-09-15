@@ -264,20 +264,38 @@ func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
 					if err != nil {
 						continue
 					}
-					if version, ok := attrVal.AsValueMap()["version"]; ok {
-						providers = append(providers, types.TfcProvider{
-							VersionedResource: types.VersionedResource{
-								ID:      name,
-								Kind:    types.KindTFCProvider,
-								Version: version.AsString(),
-								GitOpsReference: types.GitOpsReference{
-									Repo:   repo,
-									Branch: branch,
-									Path:   strings.TrimPrefix(path, dir+"/"),
-								},
-							},
-						})
+					version := ""
+					eol := types.EOLStatus{
+						Status: types.StatusValid,
 					}
+					if attrVal.Type().IsPrimitiveType() {
+						// Legacy reference
+						eol.Status = types.StatusCritical
+						version = attrVal.AsString()
+					} else {
+						if v, ok := attrVal.AsValueMap()["version"]; ok {
+							version = v.AsString()
+						}
+					}
+					// if !attrVal.Type().IsCollectionType() && !attrVal.Type().IsObjectType() {
+					// 	logrus.Infof("Skipping non-collection type %s, attr %s", attrVal.Type().FriendlyName(), name)
+					// 	continue
+					// }
+
+					providers = append(providers, types.TfcProvider{
+						VersionedResource: types.VersionedResource{
+							ID:      name,
+							Kind:    types.KindTFCProvider,
+							Version: version,
+							Parents: []types.ParentResource{{Kind: types.KindGithubRepo, ID: repo}},
+							GitOpsReference: types.GitOpsReference{
+								Repo:   repo,
+								Branch: branch,
+								Path:   strings.TrimPrefix(path, dir+"/"),
+							},
+							EOL: eol,
+						},
+					})
 				}
 			}
 		}
