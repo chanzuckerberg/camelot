@@ -2,8 +2,11 @@ package github
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/fs"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,11 +14,15 @@ import (
 
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
 	"github.com/chanzuckerberg/camelot/pkg/util"
+	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/hcl/v2"
 	"github.com/hashicorp/hcl/v2/hclsyntax"
+	cmap "github.com/orcaman/concurrent-map/v2"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
+
+var artifacthubCache = cmap.New[HashicorpProviderResponse]()
 
 var moduleBlockSchema = &hcl.BodySchema{
 	Blocks: []hcl.BlockHeaderSchema{
@@ -39,6 +46,23 @@ var providerBlockSchema = &hcl.BodySchema{
 			LabelNames: []string{"name"},
 		},
 	},
+}
+
+type HashicorpProviderResponse struct {
+	ID          string    `json:"id"`
+	Owner       string    `json:"owner"`
+	Namespace   string    `json:"namespace"`
+	Name        string    `json:"name"`
+	Alias       string    `json:"alias"`
+	Version     string    `json:"version"`
+	Tag         string    `json:"tag"`
+	Description string    `json:"description"`
+	Source      string    `json:"source"`
+	PublishedAt time.Time `json:"published_at"`
+	Downloads   int       `json:"downloads"`
+	Tier        string    `json:"tier"`
+	LogoURL     string    `json:"logo_url"`
+	Versions    []string  `json:"versions"`
 }
 
 type ModuleRef struct {
@@ -217,6 +241,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 }
 
 func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
+
 	providers := []types.Versioned{}
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -260,34 +285,61 @@ func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
 
 				attrs, _ := innerBlock.Body.JustAttributes()
 				for name, attr := range attrs {
-					attrVal, err := attr.Expr.Value(nil)
-					if err != nil {
+					attrVal, diag := attr.Expr.Value(nil)
+					if diag != nil {
 						continue
 					}
-					version := ""
+					versionConstraint := ""
+					providerID := fmt.Sprintf("hashicorp/%s", name)
 					eol := types.EOLStatus{
 						Status: types.StatusValid,
 					}
 					if attrVal.Type().IsPrimitiveType() {
-						// Legacy reference
+						// Legacy version reference
 						eol.Status = types.StatusCritical
-						version = attrVal.AsString()
 					} else {
 						if v, ok := attrVal.AsValueMap()["version"]; ok {
-							version = v.AsString()
+							versionConstraint = v.AsString()
+						}
+						if v, ok := attrVal.AsValueMap()["source"]; ok {
+							providerID = v.AsString()
 						}
 					}
-					// if !attrVal.Type().IsCollectionType() && !attrVal.Type().IsObjectType() {
-					// 	logrus.Infof("Skipping non-collection type %s, attr %s", attrVal.Type().FriendlyName(), name)
-					// 	continue
-					// }
+
+					provider, err := getProviderDetails(providerID)
+					mostCurrentVer := versionConstraint
+					if err == nil {
+						mostCurrentVer = provider.Version
+					}
+
+					if versionConstraint != "" {
+						constraint, err := version.NewConstraint(versionConstraint)
+						mostCurrentVersion := version.Must(version.NewVersion(mostCurrentVer))
+						if err == nil {
+							if !constraint.Check(mostCurrentVersion) {
+								eol.Status = types.StatusCritical
+								fmt.Printf("FAIL CURRENT: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
+							} else {
+								fmt.Printf("OK: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
+								majorVer := mostCurrentVersion.Segments()[0]
+								if majorVer > 2 {
+									lowestSupportedVer := version.Must(version.NewVersion(fmt.Sprintf("%d.0.0", majorVer-2)))
+									if !constraint.Check(lowestSupportedVer) {
+										eol.Status = types.StatusCritical
+										fmt.Printf("FAIL OLD: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
+									}
+								}
+							}
+						}
+					}
 
 					providers = append(providers, types.TfcProvider{
 						VersionedResource: types.VersionedResource{
-							ID:      name,
-							Kind:    types.KindTFCProvider,
-							Version: version,
-							Parents: []types.ParentResource{{Kind: types.KindGithubRepo, ID: repo}},
+							ID:             providerID,
+							Kind:           types.KindTFCProvider,
+							Version:        versionConstraint,
+							CurrentVersion: mostCurrentVer,
+							Parents:        []types.ParentResource{{Kind: types.KindGithubRepo, ID: repo}},
 							GitOpsReference: types.GitOpsReference{
 								Repo:   repo,
 								Branch: branch,
@@ -358,4 +410,75 @@ func findModules(dir string) ([]string, error) {
 		return nil
 	})
 	return modules, errors.Wrap(err, "failed to walk directory")
+}
+
+func getProviderDetails(providerID string) (*HashicorpProviderResponse, error) {
+	if val, ok := artifacthubCache.Get(providerID); ok {
+		return &val, nil
+	}
+
+	p, err := url.Parse(fmt.Sprintf("https://registry.terraform.io/v1/providers/%s", providerID))
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse endpoint url")
+	}
+
+	req, err := http.NewRequest("GET", p.String(), nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "Http Get call to terraform registry failed")
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		return nil, errors.Errorf("unable to query the search api, got %s", res.Status)
+	}
+
+	result := HashicorpProviderResponse{}
+
+	err = json.NewDecoder(res.Body).Decode(&result)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to decode response")
+	}
+
+	artifacthubCache.Set(providerID, result)
+	return &result, nil
+}
+
+func checkProviderVersion(verConstraint, mostCurrentVer string) bool {
+	constraint, err := version.NewConstraint(verConstraint)
+	if err != nil {
+		return false
+	}
+	mostCurrentVersion := version.Must(version.NewVersion(mostCurrentVer))
+	valid := constraint.Check(mostCurrentVersion)
+	if !valid {
+		return false
+	}
+
+	majorVer := mostCurrentVersion.Segments()[0]
+	if majorVer >= 2 {
+		lowestSupportedVer := findLowestSupportedVersion(constraint)
+		majorLowestVer := lowestSupportedVer.Segments()[0]
+		if majorLowestVer < majorVer-2 {
+			return false
+		}
+	}
+
+	return true
+}
+
+func findLowestSupportedVersion(constraint version.Constraints) *version.Version {
+	for maj := 0; maj < 1000; maj++ {
+
+		ver := version.Must(version.NewVersion(fmt.Sprintf("%d.0.0", maj)))
+		if constraint.Check(ver) {
+			return ver
+		}
+
+	}
+	return nil
 }

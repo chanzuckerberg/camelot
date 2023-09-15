@@ -73,3 +73,50 @@ func TestGetRepos(t *testing.T) {
 	r.NotNil(repos)
 	r.NotEmpty(repos)
 }
+
+func TestGetProviderDetails(t *testing.T) {
+	r := require.New(t)
+	p, err := getProviderDetails("hashicorp/aws")
+	r.NoError(err)
+	r.Equal("hashicorp", p.Owner)
+	r.Equal("aws", p.Name)
+	r.Equal("terraform-provider-aws", p.Description)
+	r.Equal("official", p.Tier)
+	r.NotEmpty(p.Version)
+}
+
+func TestVersionConstraint(t *testing.T) {
+	r := require.New(t)
+	res := checkProviderVersion("1.0.0", "1.0.0")
+	r.True(res)
+
+	res = checkProviderVersion(">= 1.0.0", "1.0.0")
+	r.True(res)
+
+	res = checkProviderVersion("~> 1.0.0", "1.0.0")
+	r.True(res)
+
+	res = checkProviderVersion("~> 1.0.0", "1.0.1")
+	r.True(res)
+
+	res = checkProviderVersion("~> 1.0.0", "1.1.0")
+	r.False(res)
+
+	res = checkProviderVersion("~> 1.0.0", "2.0.5")
+	r.False(res)
+
+	res = checkProviderVersion(">= 1.0.0", "2.0.5")
+	r.True(res)
+
+	res = checkProviderVersion(">= 1.0.0", "2.0.5")
+	r.True(res)
+
+	res = checkProviderVersion(">= 1.0.0", "3.0.5")
+	r.True(res)
+
+	res = checkProviderVersion(">= 1.0.0", "4.0.0")
+	r.False(res)
+
+	res = checkProviderVersion(">= 1.0.0", "7.0.0")
+	r.False(res)
+}
