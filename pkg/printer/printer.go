@@ -56,6 +56,7 @@ func PrintReport(report *types.InventoryReport, filter util.ReportFilter, output
 		table.SetHeaderLine(false)
 		table.SetColumnSeparator("")
 		table.SetCenterSeparator("")
+		table.SetAutoWrapText(true)
 		table.AppendBulk(util.ReportToTable(*report))
 		table.Render()
 	}

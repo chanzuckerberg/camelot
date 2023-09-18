@@ -17,10 +17,12 @@ const KindEKSCluster ResourceKind = "eks"
 const KindHelmRelease ResourceKind = "helm"
 const KindGithubOrg ResourceKind = "github-org"
 const KindGithubRepo ResourceKind = "github-repo"
+const KindGitPath ResourceKind = "path"
 const KindTerrfaormModule ResourceKind = "tf-module"
 const KindTFCOrg ResourceKind = "tfc-org"
 const KindTFCWorkspace ResourceKind = "tfc-workspace"
 const KindTFCResource ResourceKind = "tfc-resource"
+const KindTFCProvider ResourceKind = "tfc-provider"
 
 type Versioned interface {
 	GetVersionedResource() VersionedResource
@@ -133,6 +135,14 @@ type TfcWorkspace struct {
 }
 
 func (r TfcWorkspace) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
+}
+
+type TfcProvider struct {
+	VersionedResource
+}
+
+func (r TfcProvider) GetVersionedResource() VersionedResource {
 	return r.VersionedResource
 }
 

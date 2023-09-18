@@ -38,7 +38,7 @@ func versionedResourceToTableRow(item types.VersionedResource) []string {
 	}
 	return []string{
 		string(item.Kind),
-		truncate(item.ID, 80),
+		truncate(item.ID, 40),
 		truncate(sb.String(), 80),
 		item.Version,
 		item.CurrentVersion,
