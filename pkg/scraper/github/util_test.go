@@ -124,6 +124,12 @@ func TestVersionConstraint(t *testing.T) {
 	r.False(res)
 
 	res = checkProviderVersion("~> 3.30", "4.4.2")
+	r.False(res)
+
+	res = checkProviderVersion("~> 3.30", "3.30.1")
+	r.True(res)
+
+	res = checkProviderVersion("~> 3.30", "3.31.0")
 	r.True(res)
 }
 
