@@ -123,9 +123,10 @@ func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
 
 					if !checkProviderVersion(versionConstraint, mostCurrentVer) {
 						eol.Status = types.StatusCritical
+						eol.EOLDate = provider.PublishedAt.Format("2006-01-02")
 					}
 
-					relativePath := strings.TrimPrefix(path, dir+"/")
+					relativePath := strings.TrimPrefix(filepath.Dir(path), dir+"/")
 					providers = append(providers, types.TfcProvider{
 						VersionedResource: types.VersionedResource{
 							ID:             providerID,
