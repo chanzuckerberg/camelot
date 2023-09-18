@@ -13,6 +13,7 @@ import (
 var constraintRegexp *regexp.Regexp
 
 func init() {
+	// Liberally borrowed from hashicorp/go-version to avoid using reflection
 	constraintOperators := []string{"", "=", "!=", ">", "<", ">=", "<=", "~>"}
 
 	ops := make([]string, 0, len(constraintOperators))
