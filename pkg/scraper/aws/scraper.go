@@ -58,10 +58,14 @@ func Scrape(ctx context.Context, opts ...AWSClientOpt) (*types.InventoryReport, 
 	wg.Wait()
 
 	summary := util.CombineReports(reports)
+	// Can you call sts get caller identity to gleen this information
+	// my credentials from scruffy will be injected to the environment so there
+	// will be no profile information
 	summary.Identity = types.Indentity{
 		AwsAccountNumber: awsClient.GetAccountId(),
 		AwsProfile:       awsClient.GetProfile(),
 	}
 
+	// is there an easy way to tell which resources are out of data from this report?
 	return &summary, nil
 }
