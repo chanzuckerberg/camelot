@@ -19,6 +19,7 @@ func Scrape(ctx context.Context, opts ...AWSClientOpt) (*types.InventoryReport, 
 		return nil, errors.Wrap(err, "failed to load config")
 	}
 
+	// TODO: can these be made configurable? scruffy wants to target various regions over various pods
 	regions := []string{"us-east-1", "us-west-2", "us-east-2", "us-west-1"}
 	extractors := []func(ctx context.Context, awsClient interfaces.AWSClient) (*types.InventoryReport, error){
 		extractEksClusterInfo,
