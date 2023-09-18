@@ -101,7 +101,7 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "Unable to clone repo")
 		}
-		providers, err := findProviders(*repo.Name, "main", tempDir)
+		providers, err := findProviders(*repo.Name, "main", filepath.Join(tempDir, *repo.Name))
 		if err == nil {
 			report.Resources = append(report.Resources, providers...)
 		} else {
