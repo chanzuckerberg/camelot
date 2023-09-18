@@ -241,7 +241,6 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 }
 
 func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
-
 	providers := []types.Versioned{}
 	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -307,7 +306,7 @@ func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
 					}
 
 					provider, err := getProviderDetails(providerID)
-					mostCurrentVer := versionConstraint
+					mostCurrentVer := ""
 					if err == nil {
 						mostCurrentVer = provider.Version
 					}
@@ -316,38 +315,18 @@ func findProviders(repo, branch, dir string) ([]types.Versioned, error) {
 						eol.Status = types.StatusCritical
 					}
 
-					// if versionConstraint != "" {
-					// 	constraint, err := version.NewConstraint(versionConstraint)
-					// 	mostCurrentVersion := version.Must(version.NewVersion(mostCurrentVer))
-					// 	if err == nil {
-					// 		if !constraint.Check(mostCurrentVersion) {
-					// 			eol.Status = types.StatusCritical
-					// 			fmt.Printf("FAIL CURRENT: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
-					// 		} else {
-					// 			fmt.Printf("OK: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
-					// 			majorVer := mostCurrentVersion.Segments()[0]
-					// 			if majorVer > 2 {
-					// 				lowestSupportedVer := version.Must(version.NewVersion(fmt.Sprintf("%d.0.0", majorVer-2)))
-					// 				if !constraint.Check(lowestSupportedVer) {
-					// 					eol.Status = types.StatusCritical
-					// 					fmt.Printf("FAIL OLD: %s %s %s\n", providerID, versionConstraint, mostCurrentVer)
-					// 				}
-					// 			}
-					// 		}
-					// 	}
-					// }
-
+					relativePath := strings.TrimPrefix(path, dir+"/")
 					providers = append(providers, types.TfcProvider{
 						VersionedResource: types.VersionedResource{
 							ID:             providerID,
 							Kind:           types.KindTFCProvider,
 							Version:        versionConstraint,
 							CurrentVersion: mostCurrentVer,
-							Parents:        []types.ParentResource{{Kind: types.KindGithubRepo, ID: repo}},
+							Parents:        []types.ParentResource{{Kind: types.KindGithubRepo, ID: repo}, {Kind: types.KindGitPath, ID: relativePath}},
 							GitOpsReference: types.GitOpsReference{
 								Repo:   repo,
 								Branch: branch,
-								Path:   strings.TrimPrefix(path, dir+"/"),
+								Path:   relativePath,
 							},
 							EOL: eol,
 						},
@@ -457,40 +436,40 @@ func checkProviderVersion(verConstraint, mostCurrentVer string) bool {
 		return true
 	}
 
-	constraint, err := version.NewConstraint(verConstraint)
+	constraints, err := version.NewConstraint(verConstraint)
 	if err != nil {
 		return false
 	}
+
+	if constraints.Len() == 0 {
+		return false
+	}
+
 	mostCurrentVersion := version.Must(version.NewVersion(mostCurrentVer))
-	valid := constraint.Check(mostCurrentVersion)
+	valid := constraints.Check(mostCurrentVersion) // Current version no longer satisfies the constraint
 	if !valid {
 		return false
 	}
 
-	majorVer := mostCurrentVersion.Segments()[0]
-	if majorVer >= 2 {
-		lowestSupportedVer := findLowestSupportedVersion(constraint)
-		if lowestSupportedVer == nil || len(lowestSupportedVer.Segments()) == 0 {
-			fmt.Printf("Unable to find lowest supported version for %s\n", verConstraint)
-		} else {
-			majorLowestVer := lowestSupportedVer.Segments()[0]
-			if majorLowestVer < majorVer-2 {
-				return false
-			}
-		}
+	oldestSupportedVersion, err := findOldestVersionConstraint(verConstraint)
+	if err != nil {
+		return false
+	}
+
+	if !isVersionSupported(oldestSupportedVersion, mostCurrentVersion) {
+		return false // Current version satisfies the constraint, but is too old
 	}
 
 	return true
 }
 
-func findLowestSupportedVersion(constraint version.Constraints) *version.Version {
-	for maj := 0; maj < 1000; maj++ {
-		for min := 0; min < 1000; min++ {
-			ver := version.Must(version.NewVersion(fmt.Sprintf("%d.%d.0", maj, min)))
-			if constraint.Check(ver) {
-				return ver
-			}
+func isVersionSupported(v, mostCurrentVer *version.Version) bool {
+	majorVer := v.Segments()[0]
+	majorCurrentVer := mostCurrentVer.Segments()[0]
+	if majorCurrentVer >= 2 {
+		if majorVer < majorCurrentVer-2 {
+			return false
 		}
 	}
-	return nil
+	return true
 }
