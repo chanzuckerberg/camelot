@@ -13,9 +13,7 @@ import (
 )
 
 // If profile is not passed it is assumed implicitly based on environment variables, like AWS_PROFILE
-func Scrape(opts ...AWSClientOpt) (*types.InventoryReport, error) {
-	ctx := context.Background()
-
+func Scrape(ctx context.Context, opts ...AWSClientOpt) (*types.InventoryReport, error) {
 	awsClient, err := NewAWSClient(ctx, opts...)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load config")
