@@ -3,7 +3,6 @@ package github
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -11,25 +10,12 @@ import (
 
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
 	"github.com/chanzuckerberg/camelot/pkg/util"
-	"github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/hcl/v2/hclsyntax"
+	cmap "github.com/orcaman/concurrent-map/v2"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
-var moduleBlockSchema = &hcl.BodySchema{
-	Blocks: []hcl.BlockHeaderSchema{
-		{
-			Type:       "module",
-			LabelNames: []string{"name"},
-		},
-	},
-}
-
-type ModuleRef struct {
-	Ref       string
-	Timestamp time.Time
-}
+var artifacthubCache = cmap.New[HashicorpProviderResponse]()
 
 func Scrape(githubOrg string) (*types.InventoryReport, error) {
 	ctx := context.Background()
@@ -61,6 +47,12 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 		err = cloneRepo(*repo.CloneURL, *repo.Name, tempDir)
 		if err != nil {
 			return nil, errors.Wrap(err, "Unable to clone repo")
+		}
+		providers, err := findProviders(*repo.Name, "main", filepath.Join(tempDir, *repo.Name))
+		if err == nil {
+			report.Resources = append(report.Resources, providers...)
+		} else {
+			logrus.Debugf("Unable to read providers in %s: %s", *repo.Name, err.Error())
 		}
 		modules, err := findModules(tempDir)
 		if err != nil {
@@ -193,60 +185,4 @@ func Scrape(githubOrg string) (*types.InventoryReport, error) {
 	}
 
 	return report, nil
-}
-
-func findModules(dir string) ([]string, error) {
-	modules := []string{}
-	err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
-			if d.Name() == ".terraform" || d.Name() == ".git" {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-		if filepath.Ext(path) != ".tf" {
-			return nil
-		}
-
-		b, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
-
-		f, diags := hclsyntax.ParseConfig(b, path, hcl.Pos{Line: 1, Column: 1})
-		if diags.HasErrors() {
-			return errors.Wrapf(diags.Errs()[0], "failed to parse %s", path)
-		}
-
-		content, _, diags := f.Body.PartialContent(moduleBlockSchema)
-		if diags.HasErrors() {
-			return errors.Wrap(diags.Errs()[0], "terraform code has errors")
-		}
-
-		for _, block := range content.Blocks {
-			if block.Type != "module" {
-				continue
-			}
-			attrs, diags := block.Body.JustAttributes()
-			if diags.HasErrors() {
-				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
-			}
-			sourceAttr, ok := attrs["source"]
-			if !ok {
-				// Module without a source
-				continue
-			}
-
-			source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
-			if diags.HasErrors() {
-				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
-			}
-			modules = append(modules, source.AsString())
-		}
-		return nil
-	})
-	return modules, errors.Wrap(err, "failed to walk directory")
 }

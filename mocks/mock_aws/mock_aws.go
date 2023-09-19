@@ -115,10 +115,10 @@ func (mr *MockAWSClientMockRecorder) GetAccountId() *gomock.Call {
 }
 
 // GetConfig mocks base method.
-func (m *MockAWSClient) GetConfig() aws.Config {
+func (m *MockAWSClient) GetConfig() *aws.Config {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetConfig")
-	ret0, _ := ret[0].(aws.Config)
+	ret0, _ := ret[0].(*aws.Config)
 	return ret0
 }
 
@@ -171,6 +171,20 @@ func (m *MockAWSClient) GetEKSNamespaces(ctx context.Context, config *rest.Confi
 func (mr *MockAWSClientMockRecorder) GetEKSNamespaces(ctx, config interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEKSNamespaces", reflect.TypeOf((*MockAWSClient)(nil).GetEKSNamespaces), ctx, config)
+}
+
+// GetProfile mocks base method.
+func (m *MockAWSClient) GetProfile() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetProfile")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// GetProfile indicates an expected call of GetProfile.
+func (mr *MockAWSClientMockRecorder) GetProfile() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfile", reflect.TypeOf((*MockAWSClient)(nil).GetProfile))
 }
 
 // ListEC2Instances mocks base method.

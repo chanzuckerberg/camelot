@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.16.0](https://github.com/chanzuckerberg/camelot/compare/v0.15.1...v0.16.0) (2023-09-18)
+
+
+### Features
+
+* Retrieve Terraform Provider versions ([c96a0fd](https://github.com/chanzuckerberg/camelot/commit/c96a0fd56c29b06fb770e726e1836ec840d2ff20))
+* Scruffy integration interface ([ca3e046](https://github.com/chanzuckerberg/camelot/commit/ca3e0462284d825bf19c9ecb36bcba26f636708c))
+
 ## [0.15.1](https://github.com/chanzuckerberg/camelot/compare/v0.15.0...v0.15.1) (2023-09-11)
 
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
@@ -18,12 +19,34 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func NewAWSClient(ctx context.Context, profile, region string) (interfaces.AWSClient, error) {
-	client := &awsClient{
-		ctx:     ctx,
-		profile: profile,
-		region:  region,
+type AWSClientOpt func(*awsClient)
+
+func WithRegion(region string) AWSClientOpt {
+	return func(c *awsClient) {
+		c.region = region
 	}
+}
+
+func WithProfile(profile string) AWSClientOpt {
+	return func(c *awsClient) {
+		c.profile = profile
+	}
+}
+
+func WithRoleARN(roleARN string) AWSClientOpt {
+	return func(c *awsClient) {
+		c.roleARN = roleARN
+	}
+}
+
+func NewAWSClient(ctx context.Context, opts ...AWSClientOpt) (interfaces.AWSClient, error) {
+	client := &awsClient{
+		ctx: ctx,
+	}
+	for _, opt := range opts {
+		opt(client)
+	}
+
 	err := client.loadConfig()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to load config")
@@ -35,7 +58,8 @@ type awsClient struct {
 	ctx       context.Context
 	profile   string
 	region    string
-	cfg       aws.Config
+	roleARN   string
+	cfg       *aws.Config
 	accountId string
 }
 
@@ -43,12 +67,16 @@ func (a *awsClient) GetAccountId() string {
 	return a.accountId
 }
 
-func (a *awsClient) GetConfig() aws.Config {
+func (a *awsClient) GetProfile() string {
+	return a.profile
+}
+
+func (a *awsClient) GetConfig() *aws.Config {
 	return a.cfg
 }
 
 func (a *awsClient) getAccountId() (string, error) {
-	client := sts.NewFromConfig(a.cfg)
+	client := sts.NewFromConfig(*a.cfg)
 	input := &sts.GetCallerIdentityInput{}
 
 	req, err := client.GetCallerIdentity(a.ctx, input)
@@ -59,7 +87,7 @@ func (a *awsClient) getAccountId() (string, error) {
 }
 
 func (a *awsClient) loadConfig() error {
-	cfg, err := getAwsConfig(a.ctx, a.profile, a.region)
+	cfg, err := getAwsConfig(a.ctx, a.profile, a.region, a.roleARN)
 	if err != nil {
 		return errors.Wrap(err, "failed to load config")
 	}
@@ -73,7 +101,7 @@ func (a *awsClient) loadConfig() error {
 }
 
 func (a *awsClient) GetEKSClusters() ([]string, error) {
-	client := eks.NewFromConfig(a.cfg)
+	client := eks.NewFromConfig(*a.cfg)
 	out, err := client.ListClusters(a.ctx, &eks.ListClustersInput{})
 	if err != nil {
 		logrus.Errorf("unable to list clusters: %s", err.Error())
@@ -83,7 +111,7 @@ func (a *awsClient) GetEKSClusters() ([]string, error) {
 }
 
 func (a *awsClient) DescribeEKSCluster(cluster string) (*eks.DescribeClusterOutput, error) {
-	client := eks.NewFromConfig(a.cfg)
+	client := eks.NewFromConfig(*a.cfg)
 	out, err := client.DescribeCluster(a.ctx, &eks.DescribeClusterInput{
 		Name: &cluster,
 	})
@@ -94,7 +122,7 @@ func (a *awsClient) DescribeEKSCluster(cluster string) (*eks.DescribeClusterOutp
 }
 
 func (a *awsClient) ListEKSAddons(cluster string) (*eks.ListAddonsOutput, error) {
-	client := eks.NewFromConfig(a.cfg)
+	client := eks.NewFromConfig(*a.cfg)
 	addons, err := client.ListAddons(a.ctx, &eks.ListAddonsInput{
 		ClusterName: &cluster,
 	})
@@ -105,7 +133,7 @@ func (a *awsClient) ListEKSAddons(cluster string) (*eks.ListAddonsOutput, error)
 }
 
 func (a *awsClient) DescribeEKSClusterAddon(cluster, addon string) (*eks.DescribeAddonOutput, error) {
-	client := eks.NewFromConfig(a.cfg)
+	client := eks.NewFromConfig(*a.cfg)
 	addonInfo, err := client.DescribeAddon(a.ctx, &eks.DescribeAddonInput{
 		ClusterName: &cluster,
 		AddonName:   &addon,
@@ -141,7 +169,7 @@ func (a *awsClient) GetEKSNamespaces(ctx context.Context, config *rest.Config) (
 }
 
 func (a *awsClient) ListLambdaFunctions() (*lambda.ListFunctionsOutput, error) {
-	client := lambda.NewFromConfig(a.cfg)
+	client := lambda.NewFromConfig(*a.cfg)
 	out, err := client.ListFunctions(a.ctx, &lambda.ListFunctionsInput{})
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to list functions")
@@ -150,7 +178,7 @@ func (a *awsClient) ListLambdaFunctions() (*lambda.ListFunctionsOutput, error) {
 }
 
 func (a *awsClient) DescribeRDSClusters() (*rds.DescribeDBClustersOutput, error) {
-	client := rds.NewFromConfig(a.cfg)
+	client := rds.NewFromConfig(*a.cfg)
 
 	out, err := client.DescribeDBClusters(a.ctx, &rds.DescribeDBClustersInput{})
 	if err != nil {
@@ -161,7 +189,7 @@ func (a *awsClient) DescribeRDSClusters() (*rds.DescribeDBClustersOutput, error)
 
 func (a *awsClient) ListEC2Instances() ([]types.Instance, error) {
 	instances := []types.Instance{}
-	client := ec2.NewFromConfig(a.cfg)
+	client := ec2.NewFromConfig(*a.cfg)
 	var token *string
 	for {
 		out, err := client.DescribeInstances(a.ctx, &ec2.DescribeInstancesInput{
@@ -190,7 +218,7 @@ func (a *awsClient) ListEC2Instances() ([]types.Instance, error) {
 }
 
 func (a *awsClient) DescribeAMIs(imageIds []string) ([]types.Image, error) {
-	client := ec2.NewFromConfig(a.cfg)
+	client := ec2.NewFromConfig(*a.cfg)
 
 	out, err := client.DescribeImages(a.ctx, &ec2.DescribeImagesInput{
 		ImageIds: imageIds,
@@ -201,7 +229,7 @@ func (a *awsClient) DescribeAMIs(imageIds []string) ([]types.Image, error) {
 	return out.Images, nil
 }
 
-func getAwsConfig(ctx context.Context, profile, region string) (aws.Config, error) {
+func getAwsConfig(ctx context.Context, profile, region, roleARN string) (*aws.Config, error) {
 	opts := []func(*config.LoadOptions) error{}
 	if len(profile) > 0 {
 		opts = append(opts, config.WithSharedConfigProfile(profile))
@@ -209,5 +237,18 @@ func getAwsConfig(ctx context.Context, profile, region string) (aws.Config, erro
 	if len(region) > 0 {
 		opts = append(opts, config.WithRegion(region))
 	}
-	return config.LoadDefaultConfig(ctx, opts...)
+
+	cfg, err := config.LoadDefaultConfig(ctx, opts...)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to load config")
+	}
+
+	if len(roleARN) > 0 {
+		stsClient := sts.NewFromConfig(cfg)
+		roleCreds := stscreds.NewAssumeRoleProvider(stsClient, roleARN)
+		roleCfg := cfg.Copy()
+		roleCfg.Credentials = aws.NewCredentialsCache(roleCreds)
+		cfg = roleCfg
+	}
+	return &cfg, nil
 }
