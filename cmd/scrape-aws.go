@@ -57,7 +57,7 @@ func scrape(cmd *cobra.Command, args []string) error {
 		}
 		accountMap[accountNumber] = true
 
-		report, err := scraper.Scrape(scraper.WithProfile(profile))
+		report, err := scraper.Scrape(cmd.Context(), scraper.WithProfile(profile))
 		if err != nil {
 			logrus.Errorf("failed to scrape resources for profile %s: %s", profile, err.Error())
 		}

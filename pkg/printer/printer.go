@@ -41,7 +41,7 @@ func PrintReport(report *types.InventoryReport, filter util.ReportFilter, output
 	default:
 		if len(report.Identity.AwsAccountNumber) > 0 {
 			writer := bufio.NewWriter(os.Stdout)
-			_, err := writer.WriteString(fmt.Sprintf("\n\nProfile: %s, Account: %s\n\n", report.Identity.AwsProfile, report.Identity.AwsAccountNumber))
+			_, err := writer.WriteString(fmt.Sprintf("\n\nAccount: %s\n\n", report.Identity.AwsAccountNumber))
 			if err != nil {
 				return errors.Wrap(err, "failed to write yaml report")
 			}

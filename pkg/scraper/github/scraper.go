@@ -17,9 +17,7 @@ import (
 
 var artifacthubCache = cmap.New[HashicorpProviderResponse]()
 
-func Scrape(githubOrg string) (*types.InventoryReport, error) {
-	ctx := context.Background()
-
+func Scrape(ctx context.Context, githubOrg string) (*types.InventoryReport, error) {
 	githubToken := os.Getenv("GITHUB_TOKEN")
 	allRepos, err := getOrgRepos(ctx, githubToken, githubOrg)
 	if err != nil {

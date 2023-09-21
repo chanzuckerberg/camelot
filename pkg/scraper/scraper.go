@@ -1,6 +1,8 @@
 package scraper
 
 import (
+	"context"
+
 	"github.com/chanzuckerberg/camelot/pkg/scraper/aws"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/github"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/tfc"
@@ -8,16 +10,16 @@ import (
 )
 
 // Depends on env.AWS_PROFILE
-func ScrapeAWS(opts ...aws.AWSClientOpt) (*types.InventoryReport, error) {
-	return aws.Scrape(opts...)
+func ScrapeAWS(ctx context.Context, opts ...aws.AWSClientOpt) (*types.InventoryReport, error) {
+	return aws.Scrape(ctx, opts...)
 }
 
 // Depends on env.GITHUB_TOKEN
-func ScrapeGithub(githubOrg string) (*types.InventoryReport, error) {
-	return github.Scrape(githubOrg)
+func ScrapeGithub(ctx context.Context, githubOrg string) (*types.InventoryReport, error) {
+	return github.Scrape(ctx, githubOrg)
 }
 
 // Depends on env.TFE_TOKEN and env.TFE_ADDRESS
-func ScrapeTFC(orgName string) (*types.InventoryReport, error) {
-	return tfc.Scrape()
+func ScrapeTFC(ctx context.Context, orgName string) (*types.InventoryReport, error) {
+	return tfc.Scrape(ctx)
 }

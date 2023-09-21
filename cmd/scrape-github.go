@@ -28,8 +28,8 @@ func init() {
 	scrapeGithubCmd.Flags().StringVar(&githubOrg, flagGithubOrg, "chanzuckerberg", "Github org to scan. Defaults to chanzuckerberg.")
 }
 
-func scrapeGithub(ccmd *cobra.Command, args []string) error {
-	report, err := scraper.Scrape(githubOrg)
+func scrapeGithub(cmd *cobra.Command, args []string) error {
+	report, err := scraper.Scrape(cmd.Context(), githubOrg)
 	if err != nil {
 		return errors.Wrap(err, "failed to scrape resources")
 	}

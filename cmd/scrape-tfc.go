@@ -22,8 +22,8 @@ func init() {
 	scrapeCmd.AddCommand(scrapeTfcCmd)
 }
 
-func scrapeTfc(ccmd *cobra.Command, args []string) error {
-	report, err := scraper.Scrape()
+func scrapeTfc(cmd *cobra.Command, args []string) error {
+	report, err := scraper.Scrape(cmd.Context())
 	if err != nil {
 		return errors.Wrap(err, "failed to scrape resources")
 	}

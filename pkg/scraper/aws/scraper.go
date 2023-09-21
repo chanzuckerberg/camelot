@@ -21,7 +21,11 @@ func Scrape(opts ...AWSClientOpt) (*types.InventoryReport, error) {
 		return nil, errors.Wrap(err, "failed to load config")
 	}
 
-	regions := []string{"us-east-1", "us-west-2", "us-east-2", "us-west-1"}
+	regions := []string{awsClient.GetConfig().Region}
+	if awsClient.GetConfig().Region == "" {
+		regions = []string{"us-east-1", "us-west-2", "us-east-2", "us-west-1"}
+	}
+
 	extractors := []func(ctx context.Context, awsClient interfaces.AWSClient) (*types.InventoryReport, error){
 		extractEksClusterInfo,
 		extractRds,
@@ -61,7 +65,6 @@ func Scrape(opts ...AWSClientOpt) (*types.InventoryReport, error) {
 	summary := util.CombineReports(reports)
 	summary.Identity = types.Indentity{
 		AwsAccountNumber: awsClient.GetAccountId(),
-		AwsProfile:       awsClient.GetProfile(),
 	}
 
 	return &summary, nil
