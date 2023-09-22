@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/chanzuckerberg/camelot/compare/v0.16.0...v0.17.0) (2023-09-22)
+
+
+### Features
+
+* Add context to the scruffy interface ([9fa9de3](https://github.com/chanzuckerberg/camelot/commit/9fa9de3ae72a333ad8eb932fcbd2517c846de790))
+
 ## [0.16.0](https://github.com/chanzuckerberg/camelot/compare/v0.15.1...v0.16.0) (2023-09-18)
 
 
