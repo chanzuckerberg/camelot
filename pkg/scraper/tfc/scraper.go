@@ -10,10 +10,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Scrape() (*types.InventoryReport, error) {
+func Scrape(ctx context.Context) (*types.InventoryReport, error) {
 	report := &types.InventoryReport{}
 
-	tfe_manager, err := Setup(context.Background())
+	tfe_manager, err := Setup(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "error setting up TFC/TFE Manager")
 	}

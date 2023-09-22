@@ -148,7 +148,6 @@ func (r TfcProvider) GetVersionedResource() VersionedResource {
 
 type Indentity struct {
 	AwsAccountNumber string `json:"aws_account_number,omitempty"`
-	AwsProfile       string `json:"aws_profile,omitempty"`
 }
 
 type InventoryReport struct {
