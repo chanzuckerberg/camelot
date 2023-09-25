@@ -94,6 +94,7 @@ func (r Lambda) GetVersionedResource() VersionedResource {
 type Volume struct {
 	VersionedResource
 	VolumeType string `json:"volumetype,omitempty"`
+	Size       int32  `json:"size,omitempty"`
 }
 
 func (r Volume) GetVersionedResource() VersionedResource {

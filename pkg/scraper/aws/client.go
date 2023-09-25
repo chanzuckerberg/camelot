@@ -225,7 +225,6 @@ func (a *awsClient) ListVolumes() ([]types.Volume, error) {
 	for {
 		out, err := client.DescribeVolumes(a.ctx, &ec2.DescribeVolumesInput{
 			NextToken: token,
-			Filters:   []types.Filter{},
 		})
 
 		if err != nil {
