@@ -217,6 +217,30 @@ func (a *awsClient) ListEC2Instances() ([]types.Instance, error) {
 	return instances, nil
 }
 
+func (a *awsClient) ListVolumes() ([]types.Volume, error) {
+	volumes := []types.Volume{}
+	client := ec2.NewFromConfig(*a.cfg)
+
+	var token *string
+	for {
+		out, err := client.DescribeVolumes(a.ctx, &ec2.DescribeVolumesInput{
+			NextToken: token,
+		})
+
+		if err != nil {
+			logrus.Errorf("unable to list volumes: %s", err.Error())
+			break
+		}
+
+		volumes = append(volumes, out.Volumes...)
+
+		if out.NextToken == nil {
+			break
+		}
+	}
+	return volumes, nil
+}
+
 func (a *awsClient) DescribeAMIs(imageIds []string) ([]types.Image, error) {
 	client := ec2.NewFromConfig(*a.cfg)
 

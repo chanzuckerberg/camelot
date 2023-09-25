@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/eks/types"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
@@ -157,13 +158,6 @@ func TestListRDSClusters(t *testing.T) {
 func TestListLambdas(t *testing.T) {
 	r := require.New(t)
 
-	caData, err := generateCert([]string{"localhost", "endpoint.com"}, "endpoint.com")
-	r.NoError(err)
-
-	certPool := x509.NewCertPool()
-	ok := certPool.AppendCertsFromPEM([]byte(caData))
-	r.True(ok)
-
 	ctrl := gomock.NewController(t)
 	mockClient := mock_interfaces.NewMockAWSClient(ctrl)
 	mockClient.EXPECT().GetAccountId().Return("123456789012").AnyTimes()
@@ -173,6 +167,27 @@ func TestListLambdas(t *testing.T) {
 
 	mockClient.EXPECT().ListLambdaFunctions().Return(&lambda.ListFunctionsOutput{}, nil)
 
-	_, err = mockClient.ListLambdaFunctions()
+	_, err := mockClient.ListLambdaFunctions()
 	r.NoError(err)
+}
+
+func TestListVolumes(t *testing.T) {
+	r := require.New(t)
+
+	ctrl := gomock.NewController(t)
+	mockClient := mock_interfaces.NewMockAWSClient(ctrl)
+	mockClient.EXPECT().GetAccountId().Return("123456789012").AnyTimes()
+	mockClient.EXPECT().GetConfig().Return(&aws.Config{
+		Region: "us-west-2",
+	}).AnyTimes()
+
+	mockClient.EXPECT().ListVolumes().Return([]ec2types.Volume{
+		{
+			VolumeId: aws.String("vol-1234567890abcdef0"),
+		},
+	}, nil)
+
+	vols, err := mockClient.ListVolumes()
+	r.NoError(err)
+	r.NotEmpty(vols)
 }

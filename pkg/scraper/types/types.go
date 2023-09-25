@@ -12,6 +12,7 @@ const KindAWSAccount ResourceKind = "aws"
 const KindEC2Instance ResourceKind = "ec2"
 const KindMachineImage ResourceKind = "ami"
 const KindRDSCluster ResourceKind = "rds"
+const KindVolume ResourceKind = "vol"
 const KindLambda ResourceKind = "lambda"
 const KindEKSCluster ResourceKind = "eks"
 const KindHelmRelease ResourceKind = "helm"
@@ -87,6 +88,16 @@ type Lambda struct {
 }
 
 func (r Lambda) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
+}
+
+type Volume struct {
+	VersionedResource
+	VolumeType string `json:"volumetype,omitempty"`
+	Size       int32  `json:"size,omitempty"`
+}
+
+func (r Volume) GetVersionedResource() VersionedResource {
 	return r.VersionedResource
 }
 

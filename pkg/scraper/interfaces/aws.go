@@ -26,4 +26,5 @@ type AWSClient interface {
 	GetEKSNamespaces(ctx context.Context, config *rest.Config) ([]string, error)
 	ListEC2Instances() ([]ec2types.Instance, error)
 	DescribeAMIs(imageIds []string) ([]ec2types.Image, error)
+	ListVolumes() ([]ec2types.Volume, error)
 }
