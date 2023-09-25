@@ -231,3 +231,18 @@ func (mr *MockAWSClientMockRecorder) ListLambdaFunctions() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListLambdaFunctions", reflect.TypeOf((*MockAWSClient)(nil).ListLambdaFunctions))
 }
+
+// ListVolumes mocks base method.
+func (m *MockAWSClient) ListVolumes() ([]types.Volume, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListVolumes")
+	ret0, _ := ret[0].([]types.Volume)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListVolumes indicates an expected call of ListVolumes.
+func (mr *MockAWSClientMockRecorder) ListVolumes() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListVolumes", reflect.TypeOf((*MockAWSClient)(nil).ListVolumes))
+}
