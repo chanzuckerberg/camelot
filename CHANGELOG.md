@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.0](https://github.com/chanzuckerberg/camelot/compare/v0.17.0...v0.18.0) (2023-09-25)
+
+
+### Features
+
+* Scrape ec2 volumes ([#45](https://github.com/chanzuckerberg/camelot/issues/45)) ([5edfe24](https://github.com/chanzuckerberg/camelot/commit/5edfe24a606957f1989981153888ed57766f1907))
+
 ## [0.17.0](https://github.com/chanzuckerberg/camelot/compare/v0.16.0...v0.17.0) (2023-09-22)
 
 
