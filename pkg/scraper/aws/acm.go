@@ -40,11 +40,17 @@ func extractACMCertificates(ctx context.Context, awsClient interfaces.AWSClient)
 			// Imported certificates are not eligible for renewal, this one is expiring in 30 days
 			if certificate.RenewalEligibility == acmtypes.RenewalEligibilityIneligible && certificate.NotAfter.Before(time.Now().AddDate(0, 0, 30)) {
 				status = types.StatusWarning
+			} else if !*certificate.InUse {
+				// Certificate is ussued, but not used
+				status = types.StatusWarning
 			}
 		}
 
 		daysDiff := remainingDays(eol)
 		certificates = append(certificates, types.ACMCertificate{
+			InUse:      *certificate.InUse,
+			Status:     string(certificate.Status),
+			Expiration: eol,
 			VersionedResource: types.VersionedResource{
 				ID:      parts[1],
 				Arn:     *certificate.CertificateArn,
