@@ -48,9 +48,11 @@ func extractACMCertificates(ctx context.Context, awsClient interfaces.AWSClient)
 
 		daysDiff := remainingDays(eol)
 		certificates = append(certificates, types.ACMCertificate{
-			InUse:      *certificate.InUse,
-			Status:     string(certificate.Status),
-			Expiration: eol,
+			InUse:            *certificate.InUse,
+			Status:           string(certificate.Status),
+			Expiration:       eol,
+			DomainName:       certificate.DomainName,
+			AlternativeNames: certificate.SubjectAlternativeNameSummaries,
 			VersionedResource: types.VersionedResource{
 				ID:      parts[1],
 				Arn:     *certificate.CertificateArn,

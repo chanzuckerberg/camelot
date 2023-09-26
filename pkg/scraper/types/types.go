@@ -104,10 +104,12 @@ func (r Volume) GetVersionedResource() VersionedResource {
 
 type ACMCertificate struct {
 	VersionedResource
-	InUse       bool   `json:"inuse,omitempty"`
-	Status      string `json:"status,omitempty"`
-	Expiration  string `json:"expiration,omitempty"`
-	AutoRenewal bool   `json:"autorenewal,omitempty"`
+	InUse            bool     `json:"inuse,omitempty"`
+	Status           string   `json:"status,omitempty"`
+	Expiration       string   `json:"expiration,omitempty"`
+	AutoRenewal      bool     `json:"autorenewal,omitempty"`
+	DomainName       string   `json:"domainname,omitempty"`
+	AlternativeNames []string `json:"alternativenames,omitempty"`
 }
 
 func (r ACMCertificate) GetVersionedResource() VersionedResource {
