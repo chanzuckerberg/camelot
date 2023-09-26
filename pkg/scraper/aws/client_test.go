@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	acmtypes "github.com/aws/aws-sdk-go-v2/service/acm/types"
 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/eks/types"
@@ -188,6 +189,27 @@ func TestListVolumes(t *testing.T) {
 	}, nil)
 
 	vols, err := mockClient.ListVolumes()
+	r.NoError(err)
+	r.NotEmpty(vols)
+}
+
+func TestListCertificates(t *testing.T) {
+	r := require.New(t)
+
+	ctrl := gomock.NewController(t)
+	mockClient := mock_interfaces.NewMockAWSClient(ctrl)
+	mockClient.EXPECT().GetAccountId().Return("123456789012").AnyTimes()
+	mockClient.EXPECT().GetConfig().Return(&aws.Config{
+		Region: "us-west-2",
+	}).AnyTimes()
+
+	mockClient.EXPECT().ListACMCertificates().Return([]acmtypes.CertificateSummary{
+		{
+			CertificateArn: aws.String("arn:aws:acm:us-west-2:123456789012:certificate/12345678-1234-1234-1234-123456789012"),
+		},
+	}, nil)
+
+	vols, err := mockClient.ListACMCertificates()
 	r.NoError(err)
 	r.NotEmpty(vols)
 }
