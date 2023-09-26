@@ -51,7 +51,7 @@ func extractACMCertificates(ctx context.Context, awsClient interfaces.AWSClient)
 			InUse:            *certificate.InUse,
 			Status:           string(certificate.Status),
 			Expiration:       eol,
-			DomainName:       certificate.DomainName,
+			DomainName:       *certificate.DomainName,
 			AlternativeNames: certificate.SubjectAlternativeNameSummaries,
 			VersionedResource: types.VersionedResource{
 				ID:      parts[1],
