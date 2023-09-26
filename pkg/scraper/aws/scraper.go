@@ -30,6 +30,7 @@ func Scrape(ctx context.Context, opts ...AWSClientOpt) (*types.InventoryReport, 
 		extractLambdas,
 		extractAMIs,
 		extractVolumes,
+		extractACMCertificates,
 	}
 
 	var wg sync.WaitGroup
