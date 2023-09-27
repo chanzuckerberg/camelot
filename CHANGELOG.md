@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://github.com/chanzuckerberg/camelot/compare/v0.18.0...v0.19.0) (2023-09-27)
+
+
+### Features
+
+* Trace ACM certificate expiration and non-renewal ([#47](https://github.com/chanzuckerberg/camelot/issues/47)) ([ebb3aa6](https://github.com/chanzuckerberg/camelot/commit/ebb3aa6881edb8cd4dd96fd96b51df616c70003d))
+
 ## [0.18.0](https://github.com/chanzuckerberg/camelot/compare/v0.17.0...v0.18.0) (2023-09-25)
 
 
