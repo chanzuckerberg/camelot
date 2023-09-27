@@ -9,7 +9,8 @@ import (
 	reflect "reflect"
 
 	aws "github.com/aws/aws-sdk-go-v2/aws"
-	types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
+	types "github.com/aws/aws-sdk-go-v2/service/acm/types"
+	types0 "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	eks "github.com/aws/aws-sdk-go-v2/service/eks"
 	lambda "github.com/aws/aws-sdk-go-v2/service/lambda"
 	rds "github.com/aws/aws-sdk-go-v2/service/rds"
@@ -41,10 +42,10 @@ func (m *MockAWSClient) EXPECT() *MockAWSClientMockRecorder {
 }
 
 // DescribeAMIs mocks base method.
-func (m *MockAWSClient) DescribeAMIs(imageIds []string) ([]types.Image, error) {
+func (m *MockAWSClient) DescribeAMIs(imageIds []string) ([]types0.Image, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DescribeAMIs", imageIds)
-	ret0, _ := ret[0].([]types.Image)
+	ret0, _ := ret[0].([]types0.Image)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -187,11 +188,26 @@ func (mr *MockAWSClientMockRecorder) GetProfile() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfile", reflect.TypeOf((*MockAWSClient)(nil).GetProfile))
 }
 
+// ListACMCertificates mocks base method.
+func (m *MockAWSClient) ListACMCertificates() ([]types.CertificateSummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListACMCertificates")
+	ret0, _ := ret[0].([]types.CertificateSummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListACMCertificates indicates an expected call of ListACMCertificates.
+func (mr *MockAWSClientMockRecorder) ListACMCertificates() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListACMCertificates", reflect.TypeOf((*MockAWSClient)(nil).ListACMCertificates))
+}
+
 // ListEC2Instances mocks base method.
-func (m *MockAWSClient) ListEC2Instances() ([]types.Instance, error) {
+func (m *MockAWSClient) ListEC2Instances() ([]types0.Instance, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListEC2Instances")
-	ret0, _ := ret[0].([]types.Instance)
+	ret0, _ := ret[0].([]types0.Instance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -233,10 +249,10 @@ func (mr *MockAWSClientMockRecorder) ListLambdaFunctions() *gomock.Call {
 }
 
 // ListVolumes mocks base method.
-func (m *MockAWSClient) ListVolumes() ([]types.Volume, error) {
+func (m *MockAWSClient) ListVolumes() ([]types0.Volume, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListVolumes")
-	ret0, _ := ret[0].([]types.Volume)
+	ret0, _ := ret[0].([]types0.Volume)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

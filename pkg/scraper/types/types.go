@@ -14,6 +14,7 @@ const KindMachineImage ResourceKind = "ami"
 const KindRDSCluster ResourceKind = "rds"
 const KindVolume ResourceKind = "vol"
 const KindLambda ResourceKind = "lambda"
+const KindACMCertificate ResourceKind = "cert"
 const KindEKSCluster ResourceKind = "eks"
 const KindHelmRelease ResourceKind = "helm"
 const KindGithubOrg ResourceKind = "github-org"
@@ -98,6 +99,20 @@ type Volume struct {
 }
 
 func (r Volume) GetVersionedResource() VersionedResource {
+	return r.VersionedResource
+}
+
+type ACMCertificate struct {
+	VersionedResource
+	InUse            bool     `json:"inuse,omitempty"`
+	Status           string   `json:"status,omitempty"`
+	Expiration       string   `json:"expiration,omitempty"`
+	AutoRenewal      bool     `json:"autorenewal,omitempty"`
+	DomainName       string   `json:"domainname,omitempty"`
+	AlternativeNames []string `json:"alternativenames,omitempty"`
+}
+
+func (r ACMCertificate) GetVersionedResource() VersionedResource {
 	return r.VersionedResource
 }
 

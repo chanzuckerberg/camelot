@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	acmtypes "github.com/aws/aws-sdk-go-v2/service/acm/types"
 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
@@ -27,4 +28,5 @@ type AWSClient interface {
 	ListEC2Instances() ([]ec2types.Instance, error)
 	DescribeAMIs(imageIds []string) ([]ec2types.Image, error)
 	ListVolumes() ([]ec2types.Volume, error)
+	ListACMCertificates() ([]acmtypes.CertificateSummary, error)
 }

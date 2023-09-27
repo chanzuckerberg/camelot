@@ -6,6 +6,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
+	"github.com/aws/aws-sdk-go-v2/service/acm"
+	acmtypes "github.com/aws/aws-sdk-go-v2/service/acm/types"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
@@ -242,15 +244,48 @@ func (a *awsClient) ListVolumes() ([]types.Volume, error) {
 }
 
 func (a *awsClient) DescribeAMIs(imageIds []string) ([]types.Image, error) {
+	images := []types.Image{}
 	client := ec2.NewFromConfig(*a.cfg)
 
-	out, err := client.DescribeImages(a.ctx, &ec2.DescribeImagesInput{
-		ImageIds: imageIds,
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to describe AMIs")
+	var token *string
+	for {
+		out, err := client.DescribeImages(a.ctx, &ec2.DescribeImagesInput{ImageIds: imageIds, NextToken: token})
+
+		if err != nil {
+			logrus.Errorf("unable to list AMIs: %s", err.Error())
+			break
+		}
+
+		images = append(images, out.Images...)
+
+		if out.NextToken == nil {
+			break
+		}
 	}
-	return out.Images, nil
+
+	return images, nil
+}
+
+func (a *awsClient) ListACMCertificates() ([]acmtypes.CertificateSummary, error) {
+	certificates := []acmtypes.CertificateSummary{}
+	client := acm.NewFromConfig(*a.cfg)
+
+	var token *string
+	for {
+		out, err := client.ListCertificates(a.ctx, &acm.ListCertificatesInput{NextToken: token})
+
+		if err != nil {
+			logrus.Errorf("unable to list certificates: %s", err.Error())
+			break
+		}
+
+		certificates = append(certificates, out.CertificateSummaryList...)
+
+		if out.NextToken == nil {
+			break
+		}
+	}
+	return certificates, nil
 }
 
 func getAwsConfig(ctx context.Context, profile, region, roleARN string) (*aws.Config, error) {
