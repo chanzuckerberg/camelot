@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/rds v1.56.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2
 	github.com/aws/smithy-go v1.15.0
-	github.com/chanzuckerberg/go-misc v1.10.7
+	github.com/chanzuckerberg/go-misc v1.10.8
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
 	github.com/hashicorp/go-tfe v1.36.0
@@ -75,7 +75,7 @@ require (
 	github.com/evanphx/json-patch v5.6.0+incompatible // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/color v1.15.0 // indirect
-	github.com/go-errors/errors v1.5.0 // indirect
+	github.com/go-errors/errors v1.5.1 // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
