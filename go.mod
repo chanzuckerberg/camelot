@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/aws/aws-sdk-go-v2 v1.21.2
+	github.com/aws/aws-sdk-go-v2 v1.22.0
 	github.com/aws/aws-sdk-go-v2/config v1.19.1
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.43
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.128.0
@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.41.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.59.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.23.2
-	github.com/aws/smithy-go v1.15.0
+	github.com/aws/smithy-go v1.16.0
 	github.com/chanzuckerberg/go-misc v1.10.10
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
