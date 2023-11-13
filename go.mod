@@ -4,19 +4,19 @@ go 1.20
 
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
-	github.com/aws/aws-sdk-go-v2 v1.22.1
+	github.com/aws/aws-sdk-go-v2 v1.22.2
 	github.com/aws/aws-sdk-go-v2/config v1.22.0
-	github.com/aws/aws-sdk-go-v2/credentials v1.15.1
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.130.0
-	github.com/aws/aws-sdk-go-v2/service/eks v1.32.0
-	github.com/aws/aws-sdk-go-v2/service/lambda v1.43.0
-	github.com/aws/aws-sdk-go-v2/service/rds v1.61.0
-	github.com/aws/aws-sdk-go-v2/service/sts v1.25.0
+	github.com/aws/aws-sdk-go-v2/credentials v1.15.2
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.132.0
+	github.com/aws/aws-sdk-go-v2/service/eks v1.33.0
+	github.com/aws/aws-sdk-go-v2/service/lambda v1.44.0
+	github.com/aws/aws-sdk-go-v2/service/rds v1.62.3
+	github.com/aws/aws-sdk-go-v2/service/sts v1.25.1
 	github.com/aws/smithy-go v1.16.0
 	github.com/chanzuckerberg/go-misc v1.10.11
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
-	github.com/hashicorp/go-tfe v1.38.0
+	github.com/hashicorp/go-tfe v1.39.2
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23
@@ -24,10 +24,10 @@ require (
 	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/exp v0.0.0-20230817173708-d852ddb80c63
-	golang.org/x/oauth2 v0.13.0
+	golang.org/x/oauth2 v0.14.0
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/apimachinery v0.28.3
@@ -48,14 +48,14 @@ require (
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.5.0 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.2 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.2.1 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.1 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.3 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.2.2 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.2 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.5.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/acm v1.21.0
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.17.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.19.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/acm v1.21.1
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.17.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.19.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -98,8 +98,8 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/go-retryablehttp v0.7.4 // indirect
-	github.com/hashicorp/go-slug v0.12.2 // indirect
+	github.com/hashicorp/go-retryablehttp v0.7.5 // indirect
+	github.com/hashicorp/go-slug v0.13.2 // indirect
 	github.com/hashicorp/jsonapi v0.0.0-20210826224640-ee7dae0fb22d // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
@@ -152,13 +152,13 @@ require (
 	go.opentelemetry.io/otel/metric v1.17.0 // indirect
 	go.opentelemetry.io/otel/trace v1.17.0 // indirect
 	go.starlark.net v0.0.0-20230814145427-12f4cb8177e4 // indirect
-	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
-	golang.org/x/sync v0.4.0 // indirect
-	golang.org/x/sys v0.13.0 // indirect
-	golang.org/x/term v0.13.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
-	golang.org/x/time v0.3.0 // indirect
+	golang.org/x/crypto v0.15.0 // indirect
+	golang.org/x/net v0.18.0 // indirect
+	golang.org/x/sync v0.5.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/term v0.14.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/time v0.4.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
 	google.golang.org/grpc v1.57.1 // indirect
