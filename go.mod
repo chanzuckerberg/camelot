@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.131.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.0
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.45.0
-	github.com/aws/aws-sdk-go-v2/service/rds v1.62.2
+	github.com/aws/aws-sdk-go-v2/service/rds v1.62.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.1
 	github.com/aws/smithy-go v1.16.0
 	github.com/chanzuckerberg/go-misc v1.10.11
