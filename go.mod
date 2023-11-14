@@ -7,13 +7,13 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.22.2
 	github.com/aws/aws-sdk-go-v2/config v1.22.0
 	github.com/aws/aws-sdk-go-v2/credentials v1.15.2
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.132.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.133.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.0
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.45.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.62.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.1
 	github.com/aws/smithy-go v1.16.0
-	github.com/chanzuckerberg/go-misc v1.10.11
+	github.com/chanzuckerberg/go-misc v1.10.12
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
 	github.com/hashicorp/go-tfe v1.39.2
