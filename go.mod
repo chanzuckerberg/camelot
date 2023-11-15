@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.15.2
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.133.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.0
-	github.com/aws/aws-sdk-go-v2/service/lambda v1.45.0
+	github.com/aws/aws-sdk-go-v2/service/lambda v1.46.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.62.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.1
 	github.com/aws/smithy-go v1.16.0
@@ -33,6 +33,8 @@ require (
 	k8s.io/apimachinery v0.28.3
 	k8s.io/client-go v0.28.3
 )
+
+require github.com/Microsoft/hcsshim v0.11.0 // indirect
 
 require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24 // indirect
