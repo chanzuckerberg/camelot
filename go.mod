@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.23.0
 	github.com/aws/aws-sdk-go-v2/config v1.25.0
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.0
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.133.0
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.134.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.0
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.46.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.62.3
@@ -34,7 +34,10 @@ require (
 	k8s.io/client-go v0.28.3
 )
 
-require github.com/Microsoft/hcsshim v0.11.0 // indirect
+require (
+	github.com/Microsoft/hcsshim v0.11.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.1 // indirect
+)
 
 require (
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24 // indirect
@@ -55,7 +58,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.7.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/acm v1.21.2
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.17.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.19.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
