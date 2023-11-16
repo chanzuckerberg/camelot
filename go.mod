@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.46.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.62.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.1
-	github.com/aws/smithy-go v1.16.0
+	github.com/aws/smithy-go v1.17.0
 	github.com/chanzuckerberg/go-misc v1.10.12
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
