@@ -6,12 +6,12 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.23.0
 	github.com/aws/aws-sdk-go-v2/config v1.25.2
-	github.com/aws/aws-sdk-go-v2/credentials v1.16.1
+	github.com/aws/aws-sdk-go-v2/credentials v1.16.2
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.135.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.1
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.48.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.62.4
-	github.com/aws/aws-sdk-go-v2/service/sts v1.25.2
+	github.com/aws/aws-sdk-go-v2/service/sts v1.25.3
 	github.com/aws/smithy-go v1.17.0
 	github.com/chanzuckerberg/go-misc v1.10.13
 	github.com/golang/mock v1.6.0
@@ -60,7 +60,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/acm v1.21.2
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.10.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.17.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.19.2 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.20.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
