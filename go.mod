@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23
-	github.com/mittwald/go-helm-client v0.12.3
+	github.com/mittwald/go-helm-client v0.12.4
 	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
