@@ -5,8 +5,8 @@ go 1.20
 require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.23.1
-	github.com/aws/aws-sdk-go-v2/config v1.25.4
-	github.com/aws/aws-sdk-go-v2/credentials v1.16.3
+	github.com/aws/aws-sdk-go-v2/config v1.25.5
+	github.com/aws/aws-sdk-go-v2/credentials v1.16.4
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.33.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.48.1
@@ -20,7 +20,7 @@ require (
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23
-	github.com/mittwald/go-helm-client v0.12.3
+	github.com/mittwald/go-helm-client v0.12.4
 	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.3
