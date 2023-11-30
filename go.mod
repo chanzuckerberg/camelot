@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.16.6
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.3
 	github.com/aws/aws-sdk-go-v2/service/eks v1.34.2
-	github.com/aws/aws-sdk-go-v2/service/lambda v1.48.3
+	github.com/aws/aws-sdk-go-v2/service/lambda v1.49.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.64.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.25.6
 	github.com/aws/smithy-go v1.18.0
@@ -52,7 +52,7 @@ require (
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.5.1 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.5.2 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.14.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.2.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.5.6 // indirect
