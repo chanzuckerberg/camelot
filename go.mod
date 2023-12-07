@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.35.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.49.2
 	github.com/aws/aws-sdk-go-v2/service/rds v1.64.2
-	github.com/aws/aws-sdk-go-v2/service/sts v1.26.2
+	github.com/aws/aws-sdk-go-v2/service/sts v1.26.3
 	github.com/aws/smithy-go v1.18.1
 	github.com/chanzuckerberg/go-misc v1.10.14
 	github.com/golang/mock v1.6.0
