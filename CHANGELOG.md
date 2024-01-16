@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0](https://github.com/chanzuckerberg/camelot/compare/v0.19.0...v0.20.0) (2024-01-16)
+
+
+### Features
+
+* Upgrade release-please and update dependencies ([#276](https://github.com/chanzuckerberg/camelot/issues/276)) ([92e877a](https://github.com/chanzuckerberg/camelot/commit/92e877aba2df5636c8ceb74ce4ec4df6d08b2a34))
+
 ## [0.19.0](https://github.com/chanzuckerberg/camelot/compare/v0.18.0...v0.19.0) (2023-09-27)
 
 
