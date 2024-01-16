@@ -20,7 +20,11 @@ func extractACMCertificates(ctx context.Context, awsClient interfaces.AWSClient)
 	for _, certificate := range out {
 		parts := strings.Split(*certificate.CertificateArn, "/")
 		var status types.Status = types.StatusValid
-		eol := certificate.NotAfter.Format("2006-01-02")
+
+		eol := time.Now().AddDate(1, 0, 0).Format("2006-01-02")
+		if certificate.NotAfter != nil {
+			eol = certificate.NotAfter.Format("2006-01-02")
+		}
 
 		switch certificate.Status {
 		case acmtypes.CertificateStatusPendingValidation:
