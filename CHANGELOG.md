@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.1](https://github.com/chanzuckerberg/camelot/compare/v0.20.0...v0.20.1) (2024-01-16)
+
+
+### Bug Fixes
+
+* Fix acm scraping for certs with no end date ([#278](https://github.com/chanzuckerberg/camelot/issues/278)) ([0ff4587](https://github.com/chanzuckerberg/camelot/commit/0ff458774f1494e56cf246ac26e199e9e2df4f4d))
+
 ## [0.20.0](https://github.com/chanzuckerberg/camelot/compare/v0.19.0...v0.20.0) (2024-01-16)
 
 
