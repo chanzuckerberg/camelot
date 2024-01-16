@@ -27,5 +27,5 @@ var (
 func init() {
 	rootCmd.AddCommand(scrapeCmd)
 	scrapeCmd.PersistentFlags().StringVarP(&outputFormat, flagOutputFormat, "o", "text", "Output format (json, yaml, text). Defaults to text.")
-	scrapeCmd.PersistentFlags().StringSliceVarP(&filter, flagFilter, "f", []string{}, "Report filter. Defaults to empty.")
+	scrapeCmd.PersistentFlags().StringSliceVarP(&filter, flagFilter, "f", []string{}, "Report filter (e.g. -f kind=eks or -f parent.kind=eks). Defaults to empty. Multiple filters can be specified.")
 }
