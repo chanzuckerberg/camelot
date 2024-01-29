@@ -13,7 +13,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/rds v1.68.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.26.7
 	github.com/aws/smithy-go v1.19.0
-	github.com/chanzuckerberg/go-misc v1.11.0
+	github.com/chanzuckerberg/go-misc v1.11.1
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
 	github.com/hashicorp/go-tfe v1.43.0
