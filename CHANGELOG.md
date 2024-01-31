@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.0](https://github.com/chanzuckerberg/camelot/compare/v0.20.1...v0.21.0) (2024-01-31)
+
+
+### Features
+
+* Improve documentation on resource filtration ([#296](https://github.com/chanzuckerberg/camelot/issues/296)) ([dad9d27](https://github.com/chanzuckerberg/camelot/commit/dad9d27ca4f728e4180d7d7ed98b3e937e9481a9))
+
 ## [0.20.1](https://github.com/chanzuckerberg/camelot/compare/v0.20.0...v0.20.1) (2024-01-16)
 
 
