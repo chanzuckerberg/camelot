@@ -1,10 +1,12 @@
 package tfc
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
@@ -99,28 +101,40 @@ func mergeAWSAssets(allAssetMaps map[string]OrgAssets) WorkspaceAssets {
 	return merged
 }
 
-func (c *TFEAssets) GetWorkspaceState(ctx context.Context, workspace *tfe.Workspace) (WorkspaceAssets, error) {
+func (c *TFEAssets) GetWorkspaceState(ctx context.Context, workspace *tfe.Workspace) (WorkspaceAssets, bool, error) {
 	awsAssets := WorkspaceAssets{}
 	currentState, err := c.client.StateVersions.ReadCurrent(ctx, workspace.ID)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error getting state versions api for workspace '%s'", workspace.Name)
+		return nil, false, errors.Wrapf(err, "error getting state versions api for workspace '%s'", workspace.Name)
 	}
 
-	response, err := http.Get(currentState.DownloadURL)
+	bearer := "Bearer " + os.Getenv("TFE_TOKEN")
+
+	req, err := http.NewRequest("GET", currentState.DownloadURL, bytes.NewBuffer(nil))
 	if err != nil {
-		return nil, errors.Wrapf(err, "error reading state for workspace '%s'", workspace.Name)
+		return nil, false, errors.Wrapf(err, "unable to create request for workspace '%s' state", workspace.Name)
+	}
+	req.Header.Set("Authorization", bearer)
+	req.Header.Add("Accept", "application/json")
+
+	client := &http.Client{}
+
+	response, err := client.Do(req)
+	if err != nil {
+		return nil, false, errors.Wrapf(err, "error reading state for workspace '%s'", workspace.Name)
 	}
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error reading response body for state for workspace '%s'", workspace.Name)
+		return nil, false, errors.Wrapf(err, "error reading response body for state for workspace '%s'", workspace.Name)
 	}
 
 	var parsedState TFEState
 	err = json.Unmarshal(body, &parsedState)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error unmarshalling state for workspace '%s'", workspace.Name)
+		return nil, false, errors.Wrapf(err, "error unmarshalling state for workspace '%s'", workspace.Name)
 	}
 
+	empty := len(parsedState.Resources) == 0
 	for _, resource := range parsedState.Resources {
 		for _, resourceInstance := range resource.Instances {
 			if resourceInstance.Attributes.Arn == "" {
@@ -170,7 +184,7 @@ func (c *TFEAssets) GetWorkspaceState(ctx context.Context, workspace *tfe.Worksp
 		}
 
 	}
-	return awsAssets, nil
+	return awsAssets, empty, nil
 }
 
 // Returns a map of maps of maps; top level map is org name, second level map is workspace name, third level map is the resource
@@ -184,17 +198,21 @@ func (c *TFEAssets) GetAllWorkspaceStates(ctx context.Context, orgWorkspaces map
 		orgAssets := cmap.New[WorkspaceAssets]()
 
 		for _, w := range workspaces {
-			go func(w *tfe.Workspace, id string) {
+			go func(w *tfe.Workspace, org, id string) {
 				defer wg.Done()
 				logrus.Debugf("getting workspace state for workspace %s", w.Name)
-				awsAsset, err := c.GetWorkspaceState(ctx, w)
+				awsAsset, empty, err := c.GetWorkspaceState(ctx, w)
+				if empty {
+					logrus.Debugf("empty state for workspace %s/%s", org, w.Name)
+					return
+				}
 				if err == nil {
 					orgAssets.Set(id, awsAsset)
 					return
 				}
 
 				logrus.Debugf("error getting workspace state for workspace %s: %s", w.Name, err.Error())
-			}(w, w.ID)
+			}(w, orgName, w.ID)
 		}
 
 		wg.Wait()
