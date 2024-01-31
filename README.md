@@ -39,7 +39,26 @@ TFE_ADDRESS=<ADDRESS> TFE_TOKEN=<TOKEN> ./camelot scrape tfc
 All scraping commands accept the following flags:
 * `-v`: verbose mode
 * `-o`: output format, could be `json`, `yaml` or `text` (`text` is default)
-* `-f`: report filter (this flag can be repeated multiple times), supported expressions are: `id=<ID>`, `kind=<RESOURCE_KIND>`, `parent.kind=<PARENT_KIND>`, `parent.id=<ID>`, `status=<STATUS>[,<STATUS1>]`, `version=<VERSION>`. For example: `camelot scrape tfc -f kind=tfc-workspace -f parent.kind=tfc-org -f parent.id=my-infra -f status=warning,critical -f version=0.13.5`.
+* `-f`: report filter (this flag can be repeated multiple times), supported expressions are: `id=<ID>`, `kind=<RESOURCE_KIND>`, `parent.kind=<PARENT_KIND>`, `parent.id=<ID>`, `status=<STATUS>[,<STATUS1>]`, `version=<VERSION>`. For example: `camelot scrape tfc -f kind=tfc-workspace -f parent.kind=tfc-org -f parent.id=my-infra -f status=warning,critical -f version=0.13.5` or `camelot scrape aws --all -f kind=eks`.
+
+Following resource types (`kind`) are supported:
+* `aws` (AWS Account resources)
+* `ec2` (EC2 instnace resources)
+* `ami` (AWS AMI resources)
+* `rds` (RDS resources)
+* `vol` (Disk volume resources)
+* `lambda` (AWS Lambda resources)
+* `cert` (ACM Certificate resources)
+* `eks` (AWS EKS resources)
+* `helm` (Helm release resources)
+* `github-org` (Github Organization resources)
+* `github-repo` (Github Repository resources)
+* `git-path` (Git Repo Relative Path resources)
+* `tf-module` (Terraform Module resources)
+* `tfc-org` (Terraform Cloud/Enterprise Organization resources)
+* `tfc-workspace` (Terraform Cloud/Enterprise Workspace resources)
+* `tfc-resource` (Terraform Cloud/Enterprise managed resources)
+* `tfc-provider` (Terraform Provider resources)
 
 ## Contributors
 This project was initially developed by [Alex Lokshin](https://github.com/alexlokshin-czi), [Alex Biju](https://github.com/abiju-czi), [Hayden Spitzley](https://github.com/hspitzley-czi), and [Travis Fields](https://github.com/cyberious).
