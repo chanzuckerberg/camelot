@@ -64,7 +64,7 @@ func extractACMCertificates(ctx context.Context, awsClient interfaces.AWSClient)
 				Parents: []types.ParentResource{{Kind: types.KindAWSAccount, ID: awsClient.GetAccountId()}},
 				Version: string(certificate.KeyAlgorithm),
 				EOL: types.EOLStatus{
-					EOLDate:       certificate.NotAfter.Format("2006-01-02"),
+					EOLDate:       eol,
 					RemainingDays: daysDiff,
 					Status:        status,
 				},
