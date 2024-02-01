@@ -8,7 +8,6 @@ import (
 	"github.com/chanzuckerberg/camelot/pkg/util"
 	"github.com/hashicorp/go-version"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 )
 
 func Scrape(ctx context.Context) (*types.InventoryReport, error) {
@@ -24,7 +23,7 @@ func Scrape(ctx context.Context) (*types.InventoryReport, error) {
 		return nil, errors.Wrap(err, "error getting TFE/TFC workspaces")
 	}
 
-	assets, structuredAssets, err := tfe_manager.GetAllManagedAssets(orgWorkspaces)
+	assets, _, err := tfe_manager.GetAllManagedAssets(orgWorkspaces)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting all managed assets")
 	}
@@ -33,11 +32,6 @@ func Scrape(ctx context.Context) (*types.InventoryReport, error) {
 
 	for org, workspaces := range orgWorkspaces {
 		for _, workspace := range workspaces {
-			_, ok := structuredAssets[org][workspace.ID]
-			if !ok {
-				logrus.Warnf("No structured assets reference found for workspace %s/%s", org, workspace.Name)
-			}
-
 			eolDate := workspace.UpdatedAt.AddDate(0, 3, 0)
 
 			var status types.Status = types.StatusValid
