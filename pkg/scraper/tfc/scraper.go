@@ -35,7 +35,7 @@ func Scrape(ctx context.Context) (*types.InventoryReport, error) {
 		for _, workspace := range workspaces {
 			_, ok := structuredAssets[org][workspace.ID]
 			if !ok {
-				logrus.Warnf("No structured assets reference found for workspace %s", workspace.Name)
+				logrus.Warnf("No structured assets reference found for workspace %s/%s", org, workspace.Name)
 			}
 
 			eolDate := workspace.UpdatedAt.AddDate(0, 3, 0)
