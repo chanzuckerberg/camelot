@@ -1,10 +1,12 @@
 package tfc
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws/arn"
@@ -32,6 +34,9 @@ type Repo struct {
 type SourceRepos map[string]*Repo
 type Workspaces map[string]SourceRepos
 type Orgs map[string]Workspaces
+
+type WorkspaceAssets map[string]*AWSAssetReference
+type OrgAssets map[string]WorkspaceAssets
 
 type AWSAssetReference struct {
 	// OrgName -> WorkspaceName -> RepoURL -> Repo
@@ -78,40 +83,55 @@ func mergeOrgs(orgs ...Orgs) Orgs {
 	return merged
 }
 
-func mergeAWSAssets(allAssetMaps []map[string]*AWSAssetReference) map[string]*AWSAssetReference {
-	merged := map[string]*AWSAssetReference{}
-	for _, assetMap := range allAssetMaps {
-		for arn, v := range assetMap {
-			if _, exists := merged[arn]; exists {
-				merged[arn].TFEOrgs = mergeOrgs(merged[arn].TFEOrgs, v.TFEOrgs)
-			} else {
-				merged[arn] = v
+func mergeAWSAssets(allAssetMaps map[string]OrgAssets) WorkspaceAssets {
+	merged := WorkspaceAssets{}
+
+	for _, workspaces := range allAssetMaps { // organizations
+		for _, workspace := range workspaces { // workspaces
+			for arn, v := range workspace { // workspace resources
+				if _, exists := merged[arn]; exists {
+					merged[arn].TFEOrgs = mergeOrgs(merged[arn].TFEOrgs, v.TFEOrgs)
+				} else {
+					merged[arn] = v
+				}
 			}
 		}
 	}
+
 	return merged
 }
 
-func (c *TFEAssets) GetWorkspaceState(ctx context.Context, workspace *tfe.Workspace) (map[string]*AWSAssetReference, error) {
-	awsAssets := map[string]*AWSAssetReference{}
+func (c *TFEAssets) GetWorkspaceState(ctx context.Context, workspace *tfe.Workspace) (WorkspaceAssets, int, error) {
+	awsAssets := WorkspaceAssets{}
 	currentState, err := c.client.StateVersions.ReadCurrent(ctx, workspace.ID)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error getting state versions api for workspace '%s'", workspace.Name)
+		return nil, 0, errors.Wrapf(err, "error getting state versions api for workspace '%s'", workspace.Name)
 	}
 
-	response, err := http.Get(currentState.DownloadURL)
+	bearer := "Bearer " + os.Getenv("TFE_TOKEN")
+
+	req, err := http.NewRequest("GET", currentState.DownloadURL, bytes.NewBuffer(nil))
 	if err != nil {
-		return nil, errors.Wrapf(err, "error reading state for workspace '%s'", workspace.Name)
+		return nil, 0, errors.Wrapf(err, "unable to create request for workspace '%s' state", workspace.Name)
+	}
+	req.Header.Set("Authorization", bearer)
+	req.Header.Add("Accept", "application/json")
+
+	client := &http.Client{}
+
+	response, err := client.Do(req)
+	if err != nil {
+		return nil, 0, errors.Wrapf(err, "error reading state for workspace '%s'", workspace.Name)
 	}
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error reading response body for state for workspace '%s'", workspace.Name)
+		return nil, 0, errors.Wrapf(err, "error reading response body for state for workspace '%s'", workspace.Name)
 	}
 
 	var parsedState TFEState
 	err = json.Unmarshal(body, &parsedState)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error unmarshalling state for workspace '%s'", workspace.Name)
+		return nil, 0, errors.Wrapf(err, "error unmarshalling state for workspace '%s'", workspace.Name)
 	}
 
 	for _, resource := range parsedState.Resources {
@@ -163,39 +183,38 @@ func (c *TFEAssets) GetWorkspaceState(ctx context.Context, workspace *tfe.Worksp
 		}
 
 	}
-	return awsAssets, nil
+	return awsAssets, len(parsedState.Resources), nil
 }
 
-func (c *TFEAssets) GetAllWorkspaceStates(ctx context.Context, orgWorkspaces map[string][]*tfe.Workspace) ([]map[string]*AWSAssetReference, error) {
-	awsAssets := []map[string]*AWSAssetReference{}
+// Returns a map of maps of maps; top level map is org name, second level map is workspace name, third level map is the resource
+func (c *TFEAssets) GetAllWorkspaceStates(ctx context.Context, orgWorkspaces map[string][]*tfe.Workspace) (map[string]OrgAssets, error) {
+	awsAssets := map[string]OrgAssets{}
 	for orgName, workspaces := range orgWorkspaces {
 		logrus.Debugf("getting workspace states for org %s", orgName)
 
 		var wg sync.WaitGroup
 		wg.Add(len(workspaces))
-		orgAssets := cmap.New[map[string]*AWSAssetReference]()
+		orgAssets := cmap.New[WorkspaceAssets]()
 
 		for _, w := range workspaces {
-			go func(w *tfe.Workspace, id string) {
+			go func(w *tfe.Workspace, org, id string) {
 				defer wg.Done()
 				logrus.Debugf("getting workspace state for workspace %s", w.Name)
-				awsAsset, err := c.GetWorkspaceState(ctx, w)
+				awsAsset, resourceCount, err := c.GetWorkspaceState(ctx, w)
+				logrus.Debugf("%s\t%s\t%d\n", org, w.Name, resourceCount)
+
 				if err == nil {
 					orgAssets.Set(id, awsAsset)
 					return
 				}
 
 				logrus.Debugf("error getting workspace state for workspace %s: %s", w.Name, err.Error())
-			}(w, w.ID)
+			}(w, orgName, w.ID)
 		}
 
 		wg.Wait()
 
-		for _, v := range orgAssets.Items() {
-			awsAssets = append(awsAssets, v)
-		}
-
-		wg.Wait()
+		awsAssets[orgName] = orgAssets.Items()
 	}
 	return awsAssets, nil
 }
@@ -280,13 +299,13 @@ func (c *TFEAssets) GetAllWorkspaces() (map[string][]*tfe.Workspace, error) {
 	return orgWorkspaces, nil
 }
 
-func (c *TFEAssets) GetAllManagedAssets(orgWorkspaces map[string][]*tfe.Workspace) (map[string]*AWSAssetReference, error) {
+func (c *TFEAssets) GetAllManagedAssets(orgWorkspaces map[string][]*tfe.Workspace) (WorkspaceAssets, map[string]OrgAssets, error) {
 	AWSAssets, err := c.GetAllWorkspaceStates(c.ctx, orgWorkspaces)
 	if err != nil {
-		return nil, errors.Wrapf(err, "error getting workspace states")
+		return nil, nil, errors.Wrapf(err, "error getting workspace states")
 	}
 	mergedAWSAssets := mergeAWSAssets(AWSAssets)
-	return mergedAWSAssets, nil
+	return mergedAWSAssets, AWSAssets, nil
 }
 
 // Expects the following evn vars to be set:

@@ -23,7 +23,7 @@ func Scrape(ctx context.Context) (*types.InventoryReport, error) {
 		return nil, errors.Wrap(err, "error getting TFE/TFC workspaces")
 	}
 
-	assets, err := tfe_manager.GetAllManagedAssets(orgWorkspaces)
+	assets, _, err := tfe_manager.GetAllManagedAssets(orgWorkspaces)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting all managed assets")
 	}
