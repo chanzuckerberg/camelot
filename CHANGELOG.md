@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://github.com/chanzuckerberg/camelot/compare/v0.21.0...v0.22.0) (2024-02-01)
+
+
+### Features
+
+* Track workspaces with no resources ([#298](https://github.com/chanzuckerberg/camelot/issues/298)) ([037cf33](https://github.com/chanzuckerberg/camelot/commit/037cf33f1a607d48f75ac6f45e78fe18b0048448))
+
 ## [0.21.0](https://github.com/chanzuckerberg/camelot/compare/v0.20.1...v0.21.0) (2024-01-31)
 
 
