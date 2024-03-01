@@ -18,7 +18,7 @@ require (
 	github.com/google/go-github/v53 v53.2.0
 	github.com/hashicorp/go-tfe v1.46.0
 	github.com/hashicorp/go-version v1.6.0
-	github.com/hashicorp/hcl/v2 v2.19.1
+	github.com/hashicorp/hcl/v2 v2.20.0
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23
 	github.com/mittwald/go-helm-client v0.12.8
 	github.com/orcaman/concurrent-map/v2 v2.0.1
@@ -43,6 +43,8 @@ require (
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.47.0 // indirect
+	golang.org/x/mod v0.14.0 // indirect
+	golang.org/x/tools v0.17.0 // indirect
 	gopkg.in/evanphx/json-patch.v5 v5.9.0 // indirect
 )
 
