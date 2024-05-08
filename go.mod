@@ -17,7 +17,7 @@ require (
 	github.com/chanzuckerberg/go-misc/ver v0.0.0-20240301210937-eb9f5ad36011
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
-	github.com/hashicorp/go-tfe v1.52.0
+	github.com/hashicorp/go-tfe v1.53.0
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23
@@ -165,8 +165,8 @@ require (
 	go.starlark.net v0.0.0-20240123142251-f86470692795 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/sync v0.7.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
