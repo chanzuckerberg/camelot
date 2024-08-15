@@ -17,7 +17,7 @@ require (
 	github.com/chanzuckerberg/go-misc/ver v0.0.0-20240301210937-eb9f5ad36011
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
-	github.com/hashicorp/go-tfe v1.62.0
+	github.com/hashicorp/go-tfe v1.63.0
 	github.com/hashicorp/go-version v1.7.0
 	github.com/hashicorp/hcl/v2 v2.21.0
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23
@@ -112,7 +112,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
-	github.com/hashicorp/go-slug v0.15.0 // indirect
+	github.com/hashicorp/go-slug v0.15.2 // indirect
 	github.com/hashicorp/jsonapi v1.3.1 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
@@ -165,11 +165,11 @@ require (
 	go.starlark.net v0.0.0-20240123142251-f86470692795 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	golang.org/x/time v0.5.0 // indirect
+	golang.org/x/time v0.6.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240125205218-1f4bbc51befe // indirect
 	google.golang.org/grpc v1.61.0 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
