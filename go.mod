@@ -6,12 +6,12 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/aws/aws-sdk-go-v2 v1.30.4
 	github.com/aws/aws-sdk-go-v2/config v1.27.28
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.28
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.29
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.176.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.46.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.58.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.82.1
-	github.com/aws/aws-sdk-go-v2/service/sts v1.30.4
+	github.com/aws/aws-sdk-go-v2/service/sts v1.30.5
 	github.com/aws/smithy-go v1.20.4
 	github.com/chanzuckerberg/go-misc/errors v0.0.0-20240301210937-eb9f5ad36011
 	github.com/chanzuckerberg/go-misc/ver v0.0.0-20240301210937-eb9f5ad36011
