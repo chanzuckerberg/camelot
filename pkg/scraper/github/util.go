@@ -13,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chanzuckerberg/go-misc/errors"
 	"github.com/google/go-github/v53/github"
 	cmap "github.com/orcaman/concurrent-map/v2"
 	"golang.org/x/oauth2"
@@ -32,7 +31,7 @@ func getTagCommitDate(token, owner, repo, ref string) (*time.Time, error) {
 	if re.MatchString(ref) {
 		date, err := getCommitDate(token, owner, repo, ref)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get commit date")
+			return nil, fmt.Errorf("failed to get commit date: %w", err)
 		}
 		tagCache.Set(cacheKey, *date)
 		return date, nil
@@ -42,7 +41,7 @@ func getTagCommitDate(token, owner, repo, ref string) (*time.Time, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/git/ref/tags/%s", owner, repo, ref)
 	m, err := getGithubResponse(token, url)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get tag details")
+		return nil, fmt.Errorf("failed to get tag details: %w", err)
 	}
 
 	object, ok := m["object"].(map[string]interface{})
@@ -64,7 +63,7 @@ func getTagCommitDate(token, owner, repo, ref string) (*time.Time, error) {
 		url := fmt.Sprintf("https://api.github.com/repos/%s/%s/git/tags/%s", owner, repo, sha)
 		m, err := getGithubResponse(token, url)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to get tag details")
+			return nil, fmt.Errorf("failed to get tag details: %w", err)
 		}
 		object, ok = m["object"].(map[string]interface{})
 		if !ok {
@@ -79,7 +78,7 @@ func getTagCommitDate(token, owner, repo, ref string) (*time.Time, error) {
 	// Query the actual commit details
 	date, err := getCommitDate(token, owner, repo, sha)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get commit date")
+		return nil, fmt.Errorf("failed to get commit date: %w", err)
 	}
 
 	tagCache.Set(cacheKey, *date)
@@ -90,7 +89,7 @@ func getDefaultBranch(token, owner, repo string) (string, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s", owner, repo)
 	m, err := getGithubResponse(token, url)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to get repo details")
+		return "", fmt.Errorf("failed to get repo details: %w", err)
 	}
 
 	defaultBranch, ok := m["default_branch"].(string)
@@ -104,7 +103,7 @@ func getCommitDate(token, owner, repo, sha string) (*time.Time, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/commits/%s", owner, repo, sha)
 	m, err := getGithubResponse(token, url)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get commit details")
+		return nil, fmt.Errorf("failed to get commit details: %w", err)
 	}
 
 	commit, ok := m["commit"].(map[string]interface{})
@@ -121,7 +120,7 @@ func getCommitDate(token, owner, repo, sha string) (*time.Time, error) {
 	}
 	date, err := time.Parse(time.RFC3339, dateStr)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to parse date string: %", dateStr)
+		return nil, fmt.Errorf("failed to parse date string (%s): %w", dateStr, err)
 	}
 	return &date, nil
 }
@@ -164,7 +163,7 @@ func getGithubResponse(token, url string) (map[string]interface{}, error) {
 func parseModuleSource(moduleSource string) (gitUrl string, modulePath string, ref string, err error) {
 	parts := strings.Split(moduleSource, "//")
 	if len(parts) < 2 {
-		return "", "", "", errors.Errorf("invalid module source %s", moduleSource)
+		return "", "", "", fmt.Errorf("invalid module source %s: %w", moduleSource, err)
 	}
 
 	gitUrl = parts[0]
@@ -189,7 +188,7 @@ func parseModuleSource(moduleSource string) (gitUrl string, modulePath string, r
 func parseGitUrl(gitUrl string) (string, string, error) {
 	parts := strings.Split(gitUrl, "/")
 	if len(parts) < 2 {
-		return "", "", errors.Errorf("invalid git url %s", gitUrl)
+		return "", "", fmt.Errorf("invalid git url %s", gitUrl)
 	}
 
 	org := parts[len(parts)-2]
@@ -223,7 +222,7 @@ func getOrgRepos(ctx context.Context, githubToken, githubOrg string) ([]*github.
 	for {
 		repos, resp, err := client.Repositories.ListByOrg(ctx, githubOrg, opt)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to list repos")
+			return nil, fmt.Errorf("failed to list repos: %w", err)
 		}
 		for _, repo := range repos {
 			if repo.Archived != nil && !*repo.Archived {
@@ -252,7 +251,7 @@ func cloneRepo(repoUrl, repoName, destination string) error {
 	cmd := exec.Command("git", "clone", "--depth", "1", repoUrl, filepath.Join(destination, repoName))
 
 	if bts, err := cmd.CombinedOutput(); err != nil {
-		return errors.Wrapf(err, "cannot clone repo %s: %s", repoUrl, string(bts))
+		return fmt.Errorf("cannot clone repo %s: %s: %w", repoUrl, string(bts), err)
 	}
 	return nil
 }
