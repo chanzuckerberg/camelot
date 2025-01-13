@@ -56,7 +56,7 @@ func TestListEKSClusters(t *testing.T) {
 			Arn:             &[]string{"arn:aws:eks:us-west-2:123456789012:cluster/cluster1"}[0],
 			Name:            &[]string{"cluster1"}[0],
 			PlatformVersion: &[]string{"eks.1"}[0],
-			Version:         &[]string{"1.27"}[0],
+			Version:         &[]string{"1.30"}[0],
 			Endpoint:        &[]string{"https://endpoint.com"}[0],
 			CertificateAuthority: &types.Certificate{
 				Data: &[]string{string(caData)}[0],
@@ -68,7 +68,7 @@ func TestListEKSClusters(t *testing.T) {
 			Arn:             &[]string{"arn:aws:eks:us-west-2:123456789012:cluster/cluster2"}[0],
 			Name:            &[]string{"cluster2"}[0],
 			PlatformVersion: &[]string{"eks.1"}[0],
-			Version:         &[]string{"1.24"}[0],
+			Version:         &[]string{"1.31"}[0],
 			Endpoint:        &[]string{"https://endpoint.com"}[0],
 			CertificateAuthority: &types.Certificate{
 				Data: &[]string{string(caData)}[0],
