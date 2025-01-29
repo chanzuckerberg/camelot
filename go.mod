@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.34.0
 	github.com/aws/aws-sdk-go-v2/config v1.27.35
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.33
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.177.4
+	github.com/aws/aws-sdk-go-v2/service/ec2 v1.202.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.57.0
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.69.8
 	github.com/aws/aws-sdk-go-v2/service/rds v1.93.8
