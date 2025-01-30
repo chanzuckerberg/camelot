@@ -19,7 +19,7 @@ require (
 	github.com/chanzuckerberg/go-misc/ver v0.0.0-20240301210937-eb9f5ad36011
 	github.com/golang/mock v1.6.0
 	github.com/google/go-github/v53 v53.2.0
-	github.com/hashicorp/go-tfe v1.74.1
+	github.com/hashicorp/go-tfe v1.75.0
 	github.com/hashicorp/go-version v1.7.0
 	github.com/hashicorp/hcl/v2 v2.23.0
 	github.com/kataras/tablewriter v0.0.0-20180708051242-e063d29b7c23
@@ -120,7 +120,7 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.7 // indirect
-	github.com/hashicorp/go-slug v0.16.3 // indirect
+	github.com/hashicorp/go-slug v0.16.4 // indirect
 	github.com/hashicorp/jsonapi v1.3.2 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
