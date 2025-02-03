@@ -6,12 +6,12 @@ toolchain go1.23.5
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
-	github.com/aws/aws-sdk-go-v2 v1.35.0
+	github.com/aws/aws-sdk-go-v2 v1.36.0
 	github.com/aws/aws-sdk-go-v2/config v1.29.3
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.56
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.202.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.57.1
-	github.com/aws/aws-sdk-go-v2/service/lambda v1.69.9
+	github.com/aws/aws-sdk-go-v2/service/lambda v1.69.10
 	github.com/aws/aws-sdk-go-v2/service/rds v1.93.9
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.11
 	github.com/aws/smithy-go v1.22.2
@@ -71,8 +71,8 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.8 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.26 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.30 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.30 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.31 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.31 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/acm v1.30.15
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.11 // indirect
