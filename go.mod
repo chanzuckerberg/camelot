@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.29.4
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.57
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.202.2
-	github.com/aws/aws-sdk-go-v2/service/eks v1.57.1
+	github.com/aws/aws-sdk-go-v2/service/eks v1.57.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.69.10
 	github.com/aws/aws-sdk-go-v2/service/rds v1.93.10
 	github.com/aws/aws-sdk-go-v2/service/sts v1.33.12
@@ -124,7 +124,6 @@ require (
 	github.com/hashicorp/jsonapi v1.3.2 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
