@@ -2,7 +2,7 @@ on: pull_request
 
 jobs:
   lint:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v3
@@ -17,7 +17,7 @@ jobs:
           working-directory: .
           skip-pkg-cache: true
   test:
-    runs-on: [ARM64, self-hosted, Linux]
+    runs-on: ARM64
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v3
