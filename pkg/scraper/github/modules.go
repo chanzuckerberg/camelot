@@ -63,7 +63,7 @@ func findModules(dir string) ([]string, error) {
 			}
 			attrs, diags := block.Body.JustAttributes()
 			if diags.HasErrors() {
-				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+				return fmt.Errorf("terraform code has errors: %w", diags.Errs()[0])
 			}
 			sourceAttr, ok := attrs["source"]
 			if !ok {
@@ -73,11 +73,14 @@ func findModules(dir string) ([]string, error) {
 
 			source, diags := sourceAttr.Expr.(*hclsyntax.TemplateExpr).Parts[0].Value(nil)
 			if diags.HasErrors() {
-				return errors.Wrap(diags.Errs()[0], "terraform code has errors")
+				return fmt.Errorf("terraform code has errors: %w", diags.Errs()[0])
 			}
 			modules = append(modules, source.AsString())
 		}
 		return nil
 	})
-	return modules, fmt.Errorf("failed to walk directory: %w", err)
+	if err != nil {
+		return nil, fmt.Errorf("failed to walk directory: %w", err)
+	}
+	return modules, nil
 }

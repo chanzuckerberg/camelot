@@ -54,7 +54,7 @@ func Scrape(ctx context.Context, githubOrg string) (*types.InventoryReport, erro
 		}
 		modules, err := findModules(tempDir)
 		if err != nil {
-			logrus.Debugf("Unable to read modules in %s: %s", *repo.Name, err.Error())
+			logrus.Debugf("Unable to read modules in %s (%s): %s", *repo.Name, tempDir, err.Error())
 			continue
 		}
 		for _, module := range modules {
