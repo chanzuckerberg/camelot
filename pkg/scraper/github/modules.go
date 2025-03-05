@@ -1,6 +1,7 @@
 package github
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -78,5 +79,5 @@ func findModules(dir string) ([]string, error) {
 		}
 		return nil
 	})
-	return modules, errors.Wrap(err, "failed to walk directory")
+	return modules, fmt.Errorf("failed to walk directory: %w", err)
 }

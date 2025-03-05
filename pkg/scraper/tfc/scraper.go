@@ -2,12 +2,12 @@ package tfc
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
 	"github.com/chanzuckerberg/camelot/pkg/util"
 	"github.com/hashicorp/go-version"
-	"github.com/pkg/errors"
 )
 
 func Scrape(ctx context.Context) (*types.InventoryReport, error) {
@@ -15,17 +15,17 @@ func Scrape(ctx context.Context) (*types.InventoryReport, error) {
 
 	tfe_manager, err := Setup(ctx)
 	if err != nil {
-		return nil, errors.Wrap(err, "error setting up TFC/TFE Manager")
+		return nil, fmt.Errorf("error setting up TFC/TFE Manager: %w", err)
 	}
 
 	orgWorkspaces, err := tfe_manager.GetAllWorkspaces()
 	if err != nil {
-		return nil, errors.Wrap(err, "error getting TFE/TFC workspaces")
+		return nil, fmt.Errorf("error getting TFE/TFC workspaces: %w", err)
 	}
 
 	assets, _, err := tfe_manager.GetAllManagedAssets(orgWorkspaces)
 	if err != nil {
-		return nil, errors.Wrap(err, "error getting all managed assets")
+		return nil, fmt.Errorf("error getting all managed assets: %w", err)
 	}
 
 	tfcWorkspaces := []types.TfcWorkspace{}

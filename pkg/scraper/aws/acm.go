@@ -2,19 +2,19 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
 	acmtypes "github.com/aws/aws-sdk-go-v2/service/acm/types"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/interfaces"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
-	"github.com/pkg/errors"
 )
 
 func extractACMCertificates(ctx context.Context, awsClient interfaces.AWSClient) (*types.InventoryReport, error) {
 	out, err := awsClient.ListACMCertificates()
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list certificates")
+		return nil, fmt.Errorf("unable to list certificates: %w", err)
 	}
 	certificates := []types.Versioned{}
 	for _, certificate := range out {

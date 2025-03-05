@@ -2,16 +2,16 @@ package aws
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/chanzuckerberg/camelot/pkg/scraper/interfaces"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
-	"github.com/pkg/errors"
 )
 
 func extractVolumes(ctx context.Context, awsClient interfaces.AWSClient) (*types.InventoryReport, error) {
 	out, err := awsClient.ListVolumes()
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list volumes")
+		return nil, fmt.Errorf("unable to list volumes")
 	}
 	volumes := []types.Versioned{}
 	for _, volume := range out {

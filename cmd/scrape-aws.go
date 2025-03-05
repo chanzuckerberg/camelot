@@ -1,10 +1,11 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/chanzuckerberg/camelot/pkg/printer"
 	scraper "github.com/chanzuckerberg/camelot/pkg/scraper/aws"
 	"github.com/chanzuckerberg/camelot/pkg/util"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -36,7 +37,7 @@ func scrape(cmd *cobra.Command, args []string) error {
 	if scanAll {
 		profiles, err = scraper.GetAWSProfiles()
 		if err != nil {
-			return errors.Wrap(err, "failed to get AWS profiles")
+			return fmt.Errorf("failed to get AWS profiles: %w", err)
 		}
 	}
 
@@ -47,10 +48,6 @@ func scrape(cmd *cobra.Command, args []string) error {
 			continue
 		}
 		accountNumber := awsClient.GetAccountId()
-		if err != nil {
-			logrus.Debugf("failed to get account number for profile %s: %s", profile, err.Error())
-			continue
-		}
 
 		if _, ok := accountMap[accountNumber]; ok {
 			continue

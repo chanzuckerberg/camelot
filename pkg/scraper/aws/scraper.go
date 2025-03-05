@@ -2,13 +2,13 @@ package aws
 
 import (
 	"context"
+	"fmt"
 
 	"sync"
 
 	"github.com/chanzuckerberg/camelot/pkg/scraper/interfaces"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
 	"github.com/chanzuckerberg/camelot/pkg/util"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,7 +16,7 @@ import (
 func Scrape(ctx context.Context, opts ...AWSClientOpt) (*types.InventoryReport, error) {
 	awsClient, err := NewAWSClient(ctx, opts...)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load config")
+		return nil, fmt.Errorf("failed to load config")
 	}
 
 	regions := []string{awsClient.GetConfig().Region}
@@ -43,7 +43,7 @@ func Scrape(ctx context.Context, opts ...AWSClientOpt) (*types.InventoryReport, 
 		logrus.Debugf("Scraping profile %s, region %s", awsClient.GetProfile(), region)
 		client, err := NewAWSClient(ctx, append(opts, WithRegion(region))...)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to load config for profile %s, region %s", awsClient.GetProfile(), region)
+			return nil, fmt.Errorf("failed to load config for profile %s, region %s", awsClient.GetProfile(), region)
 		}
 
 		for _, extractor := range extractors {
