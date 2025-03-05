@@ -37,7 +37,7 @@ func findOldestVersionConstraint(c string) (*version.Version, error) {
 		}
 		ver, err := version.NewVersion(matches[2])
 		if err != nil {
-			return nil, errors.Wrapf(err, "unable to parse version %s", matches[2])
+			return nil, fmt.Errorf("unable to parse version %s", matches[2])
 		}
 		versions = append(versions, ver)
 	}

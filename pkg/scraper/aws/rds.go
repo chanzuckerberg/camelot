@@ -7,7 +7,6 @@ import (
 
 	"github.com/chanzuckerberg/camelot/pkg/scraper/interfaces"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,7 +19,7 @@ func extractRds(ctx context.Context, awsClient interfaces.AWSClient) (*types.Inv
 	for i, product := range products {
 		cycles, err := endOfLife(product)
 		if err != nil {
-			return nil, errors.Wrapf(err, "unable to get %s end of life data", product)
+			return nil, fmt.Errorf("unable to get %s end of life data", product)
 		}
 
 		for index, cycle := range *cycles {

@@ -7,7 +7,6 @@ import (
 	lambda_types "github.com/aws/aws-sdk-go-v2/service/lambda/types"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/interfaces"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +21,7 @@ func extractLambdas(ctx context.Context, awsClient interfaces.AWSClient) (*types
 	for _, product := range products {
 		cycles, err := endOfLife(product)
 		if err != nil {
-			return nil, errors.Wrapf(err, "unable to get %s end of life data", product)
+			return nil, fmt.Errorf("unable to get %s end of life data", product)
 		}
 
 		for _, cycle := range *cycles {

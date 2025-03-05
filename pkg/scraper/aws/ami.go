@@ -2,12 +2,12 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	ec2types "github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/interfaces"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
 )
@@ -15,7 +15,7 @@ import (
 func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.InventoryReport, error) {
 	instances, err := awsClient.ListEC2Instances()
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list functions")
+		return nil, fmt.Errorf("unable to list functions: %w", err)
 	}
 
 	amiMap := map[string][]ec2types.Instance{}
@@ -36,7 +36,7 @@ func extractAMIs(ctx context.Context, awsClient interfaces.AWSClient) (*types.In
 	amis := maps.Keys(amiMap)
 	images, err := awsClient.DescribeAMIs(amis)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to describe amis")
+		return nil, fmt.Errorf("unable to describe amis: %w", err)
 	}
 
 	for _, image := range images {

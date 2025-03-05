@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -15,7 +16,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"github.com/chanzuckerberg/camelot/pkg/scraper/interfaces"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
@@ -51,7 +51,7 @@ func NewAWSClient(ctx context.Context, opts ...AWSClientOpt) (interfaces.AWSClie
 
 	err := client.loadConfig()
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load config")
+		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 	return client, nil
 }
@@ -83,7 +83,7 @@ func (a *awsClient) getAccountId() (string, error) {
 
 	req, err := client.GetCallerIdentity(a.ctx, input)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to get caller identity")
+		return "", fmt.Errorf("failed to get caller identity: %w", err)
 	}
 	return *req.Account, nil
 }
@@ -91,12 +91,12 @@ func (a *awsClient) getAccountId() (string, error) {
 func (a *awsClient) loadConfig() error {
 	cfg, err := getAwsConfig(a.ctx, a.profile, a.region, a.roleARN)
 	if err != nil {
-		return errors.Wrap(err, "failed to load config")
+		return fmt.Errorf("failed to load config: %w", err)
 	}
 	a.cfg = cfg
 	accountId, err := a.getAccountId()
 	if err != nil {
-		return errors.Wrap(err, "failed to determine identity")
+		return fmt.Errorf("failed to determine identity: %w", err)
 	}
 	a.accountId = accountId
 	return nil
@@ -118,7 +118,7 @@ func (a *awsClient) DescribeEKSCluster(cluster string) (*eks.DescribeClusterOutp
 		Name: &cluster,
 	})
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to describe cluster %s", cluster)
+		return nil, fmt.Errorf("unable to describe cluster %s", cluster)
 	}
 	return out, nil
 }
@@ -129,7 +129,7 @@ func (a *awsClient) ListEKSAddons(cluster string) (*eks.ListAddonsOutput, error)
 		ClusterName: &cluster,
 	})
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to list cluster %s addons", cluster)
+		return nil, fmt.Errorf("unable to list cluster %s addons", cluster)
 	}
 	return addons, nil
 }
@@ -141,7 +141,7 @@ func (a *awsClient) DescribeEKSClusterAddon(cluster, addon string) (*eks.Describ
 		AddonName:   &addon,
 	})
 	if err != nil {
-		return nil, errors.Wrapf(err, "unable to describe cluster %s addon %s", cluster, addon)
+		return nil, fmt.Errorf("unable to describe cluster %s addon %s", cluster, addon)
 	}
 	return addonInfo, nil
 }
@@ -149,7 +149,7 @@ func (a *awsClient) DescribeEKSClusterAddon(cluster, addon string) (*eks.Describ
 func (a *awsClient) GetEKSConfig(ctx context.Context, clusterInfo *eks.DescribeClusterOutput) (*rest.Config, error) {
 	config, err := createK8sConfig(ctx, a, clusterInfo, *clusterInfo.Cluster.Name)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create k8s config for cluster")
+		return nil, fmt.Errorf("unable to create k8s config for cluster")
 	}
 	return config, nil
 }
@@ -157,11 +157,11 @@ func (a *awsClient) GetEKSConfig(ctx context.Context, clusterInfo *eks.DescribeC
 func (a *awsClient) GetEKSNamespaces(ctx context.Context, config *rest.Config) ([]string, error) {
 	k8sClient, err := getK8sClient(config)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create k8s client for cluster")
+		return nil, fmt.Errorf("unable to create k8s client for cluster")
 	}
 	ns, err := k8sClient.CoreV1().Namespaces().List(ctx, metav1.ListOptions{})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list namespaces")
+		return nil, fmt.Errorf("unable to list namespaces")
 	}
 	namespaces := []string{}
 	for _, namespace := range ns.Items {
@@ -174,7 +174,7 @@ func (a *awsClient) ListLambdaFunctions() (*lambda.ListFunctionsOutput, error) {
 	client := lambda.NewFromConfig(*a.cfg)
 	out, err := client.ListFunctions(a.ctx, &lambda.ListFunctionsInput{})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list functions")
+		return nil, fmt.Errorf("unable to list functions")
 	}
 	return out, nil
 }
@@ -184,7 +184,7 @@ func (a *awsClient) DescribeRDSClusters() (*rds.DescribeDBClustersOutput, error)
 
 	out, err := client.DescribeDBClusters(a.ctx, &rds.DescribeDBClustersInput{})
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list rds clusters")
+		return nil, fmt.Errorf("unable to list rds clusters")
 	}
 	return out, nil
 }
@@ -299,7 +299,7 @@ func getAwsConfig(ctx context.Context, profile, region, roleARN string) (*aws.Co
 
 	cfg, err := config.LoadDefaultConfig(ctx, opts...)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to load config")
+		return nil, fmt.Errorf("failed to load config")
 	}
 
 	if len(roleARN) > 0 {

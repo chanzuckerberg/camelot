@@ -21,7 +21,7 @@ func Scrape(ctx context.Context, githubOrg string) (*types.InventoryReport, erro
 	githubToken := os.Getenv("GITHUB_TOKEN")
 	allRepos, err := getOrgRepos(ctx, githubToken, githubOrg)
 	if err != nil {
-		return nil, errors.Wrap(err, "Unable to retrieve github repos for the org")
+		return nil, fmt.Errorf("unable to retrieve github repos for the org: %w", err)
 	}
 
 	if len(allRepos) == 0 {
@@ -38,13 +38,13 @@ func Scrape(ctx context.Context, githubOrg string) (*types.InventoryReport, erro
 	for _, repo := range allRepos {
 		tempDir, err := os.MkdirTemp("/tmp", *repo.Name)
 		if err != nil {
-			return nil, errors.Wrap(err, "Unable to create temp directory")
+			return nil, fmt.Errorf("unable to create temp directory: %w", err)
 		}
 		defer os.RemoveAll(tempDir)
 
 		err = cloneRepo(*repo.CloneURL, *repo.Name, tempDir)
 		if err != nil {
-			return nil, errors.Wrap(err, "Unable to clone repo")
+			return nil, fmt.Errorf("unable to clone repo: %w", err)
 		}
 		providers, err := findProviders(*repo.Name, "main", filepath.Join(tempDir, *repo.Name))
 		if err == nil {
@@ -54,7 +54,7 @@ func Scrape(ctx context.Context, githubOrg string) (*types.InventoryReport, erro
 		}
 		modules, err := findModules(tempDir)
 		if err != nil {
-			logrus.Debugf("Unable to read modules in %s: %s", *repo.Name, err.Error())
+			logrus.Debugf("Unable to read modules in %s (%s): %s", *repo.Name, tempDir, err.Error())
 			continue
 		}
 		for _, module := range modules {

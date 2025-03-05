@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/chanzuckerberg/camelot/pkg/printer"
 	scraper "github.com/chanzuckerberg/camelot/pkg/scraper/github"
 	"github.com/chanzuckerberg/camelot/pkg/util"
@@ -31,7 +33,7 @@ func init() {
 func scrapeGithub(cmd *cobra.Command, args []string) error {
 	report, err := scraper.Scrape(cmd.Context(), githubOrg)
 	if err != nil {
-		return errors.Wrap(err, "failed to scrape resources")
+		return fmt.Errorf("failed to scrape resources: %w", err)
 	}
 	if report == nil {
 		return errors.New("No report was produced")
@@ -40,7 +42,7 @@ func scrapeGithub(cmd *cobra.Command, args []string) error {
 
 	err = printer.PrintReport(report, util.CreateFilter(filter), outputFormat)
 	if err != nil {
-		return errors.Wrap(err, "failed to print report")
+		return fmt.Errorf("failed to print report: %w", err)
 	}
 
 	return nil

@@ -9,7 +9,6 @@ import (
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
 	"github.com/chanzuckerberg/camelot/pkg/util"
 	"github.com/kataras/tablewriter"
-	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
@@ -19,23 +18,23 @@ func PrintReport(report *types.InventoryReport, filter util.ReportFilter, output
 	case "json":
 		b, err := json.MarshalIndent(report, "", "  ")
 		if err != nil {
-			return errors.Wrap(err, "failed to marshal json report")
+			return fmt.Errorf("failed to marshal json report: %w", err)
 		}
 		writer := bufio.NewWriter(os.Stdout)
 		_, err = writer.WriteString(string(b))
 		if err != nil {
-			return errors.Wrap(err, "failed to write yaml report")
+			return fmt.Errorf("failed to write yaml report: %w", err)
 		}
 		writer.Flush()
 	case "yaml":
 		b, err := yaml.Marshal(report)
 		if err != nil {
-			return errors.Wrap(err, "failed to marshal yaml report")
+			return fmt.Errorf("failed to marshal yaml report: %w", err)
 		}
 		writer := bufio.NewWriter(os.Stdout)
 		_, err = writer.WriteString(string(b))
 		if err != nil {
-			return errors.Wrap(err, "failed to write yaml report")
+			return fmt.Errorf("failed to write yaml report: %w", err)
 		}
 		writer.Flush()
 	default:
@@ -43,7 +42,7 @@ func PrintReport(report *types.InventoryReport, filter util.ReportFilter, output
 			writer := bufio.NewWriter(os.Stdout)
 			_, err := writer.WriteString(fmt.Sprintf("\n\nAccount: %s\n\n", report.Identity.AwsAccountNumber))
 			if err != nil {
-				return errors.Wrap(err, "failed to write yaml report")
+				return fmt.Errorf("failed to write yaml report: %w", err)
 			}
 			writer.Flush()
 		}
