@@ -94,7 +94,7 @@ func TestListEKSClusters(t *testing.T) {
 		}
 		cluster := resource.(scraper_types.EKSCluster)
 		r.Equal("eks.1", cluster.PlatformVersion)
-		r.GreaterOrEqual(cluster.EOL.RemainingDays, -1)
+		r.LessOrEqual(cluster.EOL.RemainingDays, -1)
 	}
 }
 

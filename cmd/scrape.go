@@ -13,7 +13,7 @@ const (
 var (
 	scrapeCmd = &cobra.Command{
 		Use:   "scrape",
-		Short: "scrapes AWS for versioned inventory",
+		Short: "scrapes for versioned inventory",
 		Long:  ``,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logrus.Info("Please specify a subcommand. See --help for more information.")

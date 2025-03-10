@@ -157,12 +157,12 @@ func getProviderDetails(providerID string) (*HashicorpProviderResponse, error) {
 
 	p, err := url.Parse(fmt.Sprintf("https://registry.terraform.io/v1/providers/%s", providerID))
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse endpoint url")
+		return nil, fmt.Errorf("unable to parse endpoint url")
 	}
 
 	req, err := http.NewRequest("GET", p.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "Http Get call to terraform registry failed")
+		return nil, fmt.Errorf("http Get call to terraform registry failed")
 	}
 
 	res, err := http.DefaultClient.Do(req)
@@ -179,7 +179,7 @@ func getProviderDetails(providerID string) (*HashicorpProviderResponse, error) {
 
 	err = json.NewDecoder(res.Body).Decode(&result)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to decode response")
+		return nil, fmt.Errorf("unable to decode response")
 	}
 
 	artifacthubCache.Set(providerID, result)

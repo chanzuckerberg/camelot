@@ -168,14 +168,14 @@ func findHelmChartsByName(chartName string) ([]ArtifactHubPackage, error) {
 
 	p, err := url.Parse("https://artifacthub.io/api/v1/packages/search")
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse endpoint url")
+		return nil, fmt.Errorf("unable to parse endpoint url")
 	}
 
 	p.RawQuery = query.Encode()
 
 	req, err := http.NewRequest("GET", p.String(), nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "Http Get call to the artifacthub api failed")
+		return nil, fmt.Errorf("http Get call to the artifacthub api failed")
 	}
 
 	res, err := http.DefaultClient.Do(req)

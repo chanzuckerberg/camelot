@@ -13,7 +13,6 @@ import (
 	"github.com/chanzuckerberg/camelot/pkg/scraper/types"
 	"github.com/chanzuckerberg/camelot/pkg/util"
 	helmClient "github.com/mittwald/go-helm-client"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -24,7 +23,7 @@ import (
 func extractEksClusterInfo(ctx context.Context, awsClient interfaces.AWSClient) (*types.InventoryReport, error) {
 	cycles, err := endOfLife("amazon-eks")
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get end of life data")
+		return nil, fmt.Errorf("unable to get end of life data")
 	}
 
 	activeVersion := ""
@@ -39,7 +38,7 @@ func extractEksClusterInfo(ctx context.Context, awsClient interfaces.AWSClient) 
 
 	clusters, err := awsClient.GetEKSClusters()
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to list clusters")
+		return nil, fmt.Errorf("unable to list clusters")
 	}
 
 	var wg sync.WaitGroup
@@ -66,22 +65,22 @@ func extractEksClusterInfo(ctx context.Context, awsClient interfaces.AWSClient) 
 func processCluster(ctx context.Context, awsClient interfaces.AWSClient, cluster string, cycleMap map[string]types.ProductCycle, activeVersion string) (*types.InventoryReport, error) {
 	clusterInfo, err := awsClient.DescribeEKSCluster(cluster)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to describe cluster")
+		return nil, fmt.Errorf("unable to describe cluster")
 	}
 
 	config, err := awsClient.GetEKSConfig(ctx, clusterInfo)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get k8s config")
+		return nil, fmt.Errorf("unable to get k8s config")
 	}
 
 	namespaces, err := awsClient.GetEKSNamespaces(ctx, config)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get k8s namespaces")
+		return nil, fmt.Errorf("unable to get k8s namespaces")
 	}
 
 	helmReleases, err := getHelmReleases(ctx, config, namespaces, cluster)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to get helm releases")
+		return nil, fmt.Errorf("unable to get helm releases")
 	}
 
 	eol := ""
@@ -94,7 +93,7 @@ func processCluster(ctx context.Context, awsClient interfaces.AWSClient, cluster
 	logrus.Debugf("eks cluster: %s -> %s: [%d]", *clusterInfo.Cluster.Arn, *clusterInfo.Cluster.Version, daysDiff)
 	addons, err := awsClient.ListEKSAddons(cluster)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to describe addons")
+		return nil, fmt.Errorf("unable to describe addons")
 	}
 
 	eksAddons := []types.EKSClusterAddon{}
@@ -141,7 +140,7 @@ func createK8sConfig(ctx context.Context, awsClient interfaces.AWSClient, cluste
 	var rawConfig *rest.Config
 	cert, err := base64.StdEncoding.DecodeString(*clusterInfo.Cluster.CertificateAuthority.Data)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to decode CA data")
+		return nil, fmt.Errorf("unable to decode CA data")
 	}
 	config := api.Config{
 		APIVersion: "v1",
@@ -161,7 +160,7 @@ func createK8sConfig(ctx context.Context, awsClient interfaces.AWSClient, cluste
 	}
 	rawConfig, err = clientcmd.NewDefaultClientConfig(config, &clientcmd.ConfigOverrides{}).ClientConfig()
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to create kubeconfig")
+		return nil, fmt.Errorf("unable to create kubeconfig")
 	}
 	sc := sts.NewFromConfig(*awsClient.GetConfig())
 	stsClient := sts.NewPresignClient(sc)
