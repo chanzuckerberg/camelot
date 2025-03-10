@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.25.0](https://github.com/chanzuckerberg/camelot/compare/v0.24.0...v0.25.0) (2025-03-10)
+
+
+### Features
+
+* Update go helm dependencies ([#670](https://github.com/chanzuckerberg/camelot/issues/670)) ([9619fc8](https://github.com/chanzuckerberg/camelot/commit/9619fc899ed81f97fe20a1af67a0d0743c1a639b))
+
+
+### Bug Fixes
+
+* Update runs-on to use ARM64 or X64 ([#719](https://github.com/chanzuckerberg/camelot/issues/719)) ([6317cef](https://github.com/chanzuckerberg/camelot/commit/6317ceffec6550c6b1a22c9c5bad7d5993d11d21))
+
 ## [0.22.0](https://github.com/chanzuckerberg/camelot/compare/v0.21.0...v0.22.0) (2024-02-01)
 
 
