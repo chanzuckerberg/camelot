@@ -1,5 +1,8 @@
 # Validates PR title follows conventional commits
 name: conventional-commits
+permissions:
+  contents: read
+  pull-requests: read
 on:
   pull_request:
     branches: main
