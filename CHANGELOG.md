@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.0 (2026-02-27)
+
+
+### Features
+
+* Update go helm dependencies ([#670](https://github.com/chanzuckerberg/camelot/issues/670)) ([9619fc8](https://github.com/chanzuckerberg/camelot/commit/9619fc899ed81f97fe20a1af67a0d0743c1a639b))
+
+
+### Bug Fixes
+
+* Potential fix for code scanning alert no. 1: Workflow does not contain permissions ([#899](https://github.com/chanzuckerberg/camelot/issues/899)) ([692d46f](https://github.com/chanzuckerberg/camelot/commit/692d46f7d656616b122cc8dd77f07e57a75d47a5))
+* Potential fix for code scanning alert no. 2: Workflow does not contain permissions ([#900](https://github.com/chanzuckerberg/camelot/issues/900)) ([565ed49](https://github.com/chanzuckerberg/camelot/commit/565ed498aa9afc3b0d2544b4d013f431e8852ecc))
+* Potential fix for code scanning alert no. 3: Workflow does not contain permissions ([#901](https://github.com/chanzuckerberg/camelot/issues/901)) ([1fdfa25](https://github.com/chanzuckerberg/camelot/commit/1fdfa259d5917f373ac8fd729aed46699230b066))
+* Potential fix for code scanning alert no. 4: Workflow does not contain permissions ([#902](https://github.com/chanzuckerberg/camelot/issues/902)) ([acb44b6](https://github.com/chanzuckerberg/camelot/commit/acb44b6d26163b9471271a23b19f0930e91606fe))
+* Potential fix for code scanning alert no. 5: Workflow does not contain permissions ([#903](https://github.com/chanzuckerberg/camelot/issues/903)) ([27780fb](https://github.com/chanzuckerberg/camelot/commit/27780fb6bcd237e247388205a8f9b217485bddef))
+* Replace golang error wrapping with native ([#760](https://github.com/chanzuckerberg/camelot/issues/760)) ([e32f043](https://github.com/chanzuckerberg/camelot/commit/e32f043974fe2d3b18fe1b631d5eb05381f9f3a0))
+* Update runs-on to use ARM64 or X64 ([#719](https://github.com/chanzuckerberg/camelot/issues/719)) ([6317cef](https://github.com/chanzuckerberg/camelot/commit/6317ceffec6550c6b1a22c9c5bad7d5993d11d21))
+
 ## [0.25.1](https://github.com/chanzuckerberg/camelot/compare/v0.25.0...v0.25.1) (2025-07-28)
 
 
