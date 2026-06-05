@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.304.2
 	github.com/aws/aws-sdk-go-v2/service/eks v1.84.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.92.2
-	github.com/aws/aws-sdk-go-v2/service/rds v1.118.4
+	github.com/aws/aws-sdk-go-v2/service/rds v1.119.1
 	github.com/aws/aws-sdk-go-v2/service/sts v1.43.1
 	github.com/aws/smithy-go v1.27.1
 	github.com/chanzuckerberg/go-misc/ver v0.0.0-20250214152455-5250f5e0b581
@@ -37,7 +37,7 @@ require (
 require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.28 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.11 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/signin v1.1.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
@@ -73,7 +73,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.28 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.28 // indirect
 	github.com/aws/aws-sdk-go-v2/service/acm v1.39.2
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.27 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.28 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.30.19 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.36.2 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
