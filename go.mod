@@ -58,7 +58,7 @@ require (
 	golang.org/x/tools v0.44.0 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 	helm.sh/helm/v4 v4.2.0 // indirect
-	oras.land/oras-go/v2 v2.6.0 // indirect
+	oras.land/oras-go/v2 v2.6.2 // indirect
 	sigs.k8s.io/controller-runtime v0.24.0 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v6 v6.3.3 // indirect
@@ -143,7 +143,7 @@ require (
 	github.com/zclconf/go-cty v1.16.3 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
 	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.45.0 // indirect
 	golang.org/x/term v0.43.0 // indirect
 	golang.org/x/text v0.37.0 // indirect
