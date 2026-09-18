@@ -91,7 +91,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/acm v1.49.0
+	github.com/aws/aws-sdk-go-v2/service/acm v1.50.0
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.38.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.43.0 // indirect
