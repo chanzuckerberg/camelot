@@ -11,7 +11,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/eks v1.102.0
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.112.0
 	github.com/aws/aws-sdk-go-v2/service/rds v1.130.0
-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.1
+	github.com/aws/aws-sdk-go-v2/service/sts v1.51.4
 	github.com/aws/smithy-go v1.28.5
 	github.com/chanzuckerberg/go-misc/ver v0.0.0-20250214152455-5250f5e0b581
 	github.com/golang/mock v1.6.0
@@ -37,7 +37,7 @@ require (
 require (
 	dario.cat/mergo v1.0.1 // indirect
 	github.com/apparentlymart/go-textseg/v17 v17.0.1 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.4 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.21 // indirect
 	github.com/aws/aws-sdk-go-v2/service/signin v1.10.1 // indirect
 	github.com/blang/semver/v4 v4.0.0 // indirect
