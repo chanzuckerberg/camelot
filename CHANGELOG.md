@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 (2026-08-11)
+
+
+### Bug Fixes
+
+* Potential fix for code scanning alert no. 3: Workflow does not contain permissions ([#901](https://github.com/chanzuckerberg/camelot/issues/901)) ([1fdfa25](https://github.com/chanzuckerberg/camelot/commit/1fdfa259d5917f373ac8fd729aed46699230b066))
+
 ## [0.25.1](https://github.com/chanzuckerberg/camelot/compare/v0.25.0...v0.25.1) (2025-07-28)
 
 
